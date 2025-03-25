@@ -1,0 +1,97 @@
+<!-- navbar-->
+<header class="header bg-white">
+  <div class="container px-0 px-lg-3">
+    <nav class="navbar navbar-expand-lg navbar-light py-3 px-lg-0">
+      <a class="navbar-brand glitter-effect" href="{% url 'store:home' %}">
+        <span class="font-weight-bold text-uppercase">Ювелирные изделия</span>
+      </a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключить навигацию">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'store:home' %}">
+              <i class="fas fa-home mr-1"></i>Главная
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle {% if 'category' in request.path %}active{% endif %}" id="pagesDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-list mr-1"></i>Категории
+            </a>
+            <div class="dropdown-menu mt-3" aria-labelledby="pagesDropdown">
+              {% if categories_menu %}
+                {% for cat_menu in categories_menu %}
+                  <a class="dropdown-item border-0 transition-link" href="{% url 'store:category-products' cat_menu.slug %}">{{cat_menu.title}}</a>
+                {% endfor %}
+              {% endif %}
+              <hr>
+              <a class="dropdown-item border-0 transition-link" href="{% url 'store:all-categories' %}">Все категории</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://t.me/+o_h8y8vpPY82ZWNi" target="_blank">
+              <i class="fab fa-telegram mr-1"></i>Блог
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if '/contacts/' in request.path %}active{% endif %}" href="{% url 'store:contacts' %}">
+              <i class="fas fa-envelope mr-1"></i>Контакты
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto"> 
+          {% if request.user.is_authenticated %}           
+            <li class="nav-item">
+              <a class="nav-link glitter-effect {% if '/cart/' in request.path %}active{% endif %}" href="{% url 'store:cart' %}">
+                <i class="fas fa-dolly-flatbed mr-1"></i>Корзина<small class="text-gray">({{cart_items.count}})</small>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="far fa-heart mr-1"></i>Избранное<small class="text-gray"> (0)</small>
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="accountDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user-alt mr-1"></i>Мой аккаунт
+              </a>
+              <div class="dropdown-menu mt-3" aria-labelledby="accountDropdown">
+                <a class="dropdown-item border-0 transition-link" href="{% url 'store:profile' %}">
+                  <i class="fas fa-user-circle mr-1"></i>Профиль
+                </a>
+                <a class="dropdown-item border-0 transition-link" href="{% url 'store:cart' %}">
+                  <i class="fas fa-shopping-cart mr-1"></i>Корзина
+                </a>
+                <a class="dropdown-item border-0 transition-link" href="{% url 'store:orders' %}">
+                  <i class="fas fa-clipboard-list mr-1"></i>Заказы
+                </a>
+                <a class="dropdown-item border-0 transition-link" href="{% url 'store:password-change' %}">
+                  <i class="fas fa-key mr-1"></i>Сменить пароль
+                </a>
+                <hr>
+                <a class="dropdown-item border-0 transition-link" href="{% url 'store:logout' %}">
+                  <i class="fas fa-sign-out-alt mr-1"></i>Выйти
+                </a>
+              </div>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link {% if '/login/' in request.path %}active{% endif %}" href="{% url 'store:login' %}">
+                <i class="fas fa-sign-in-alt mr-1"></i>Войти
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if '/register/' in request.path %}active{% endif %}" href="{% url 'store:register' %}">
+                <i class="fas fa-user-plus mr-1"></i>Создать аккаунт
+              </a>
+            </li>
+          {% endif %}   
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+

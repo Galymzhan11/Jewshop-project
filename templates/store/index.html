@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+{% load static %}
+
+      {% block content %}
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- FEATURED PRODUCTS SHOWCASE -->
+            <section class="product-carousel mb-5">
+              <div class="carousel-container">
+                <!-- Слайды -->
+                <div class="carousel-slides">
+                  <!-- Слайд 1 -->
+                  <div class="carousel-slide active">
+                    <div class="carousel-content">
+                      <div class="product-info">
+                        <span class="product-category">Кольца</span>
+                        <h2 class="product-title">Золотое кольцо с бриллиантом</h2>
+                        <div class="product-price">
+                          <span class="old-price">₸300,000</span>
+                          <span class="current-price">₸250,000</span>
+                        </div>
+                        <p class="product-description">Изысканное кольцо из белого золота 585 пробы с бриллиантом круглой огранки. Идеальный выбор для особого случая или в качестве помолвочного кольца.</p>
+                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
+                      </div>
+                      <div class="product-image">
+                        <img src="/media/product/Gold-Ring-with-White-Stone.jpg" alt="Золотое кольцо с бриллиантом">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Слайд 2 -->
+                  <div class="carousel-slide">
+                    <div class="carousel-content">
+                      <div class="product-info">
+                        <span class="product-category">Ожерелья</span>
+                        <h2 class="product-title">Серебряное колье с подвеской</h2>
+                        <div class="product-price">
+                          <span class="old-price">₸220,000</span>
+                          <span class="current-price">₸180,000</span>
+                        </div>
+                        <p class="product-description">Элегантное колье из серебра 925 пробы с подвеской, украшенной фианитами. Подчеркнет вашу индивидуальность и станет прекрасным дополнением к любому образу.</p>
+                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
+                      </div>
+                      <div class="product-image">
+                        <img src="/media/product/Silver-Necklace-with-Big-Diamond.jpg" alt="Серебряное колье с подвеской">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Слайд 3 -->
+                  <div class="carousel-slide">
+                    <div class="carousel-content">
+                      <div class="product-info">
+                        <span class="product-category">Серьги</span>
+                        <h2 class="product-title">Золотые серьги с жемчугом</h2>
+                        <div class="product-price">
+                          <span class="old-price">₸240,000</span>
+                          <span class="current-price">₸195,000</span>
+                        </div>
+                        <p class="product-description">Роскошные серьги из желтого золота 585 пробы с натуральным жемчугом и бриллиантами. Идеальное украшение для вечернего выхода или особого события.</p>
+                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
+                      </div>
+                      <div class="product-image">
+                        <img src="/media/product/Gold-Star-Earrings.jpg" alt="Золотые серьги с жемчугом">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Кнопки навигации -->
+                <button class="carousel-nav prev-btn" onclick="prevSlide()">&#10094;</button>
+                <button class="carousel-nav next-btn" onclick="nextSlide()">&#10095;</button>
+                
+                <!-- Индикаторы слайдов (точки) -->
+                <div class="carousel-indicators">
+                  <span class="dot active" onclick="goToSlide(0)"></span>
+                  <span class="dot" onclick="goToSlide(1)"></span>
+                  <span class="dot" onclick="goToSlide(2)"></span>
+                </div>
+              </div>
+            </section>
+
+            <style>
+              .product-carousel {
+                margin-top: 50px;
+                position: relative;
+                margin-bottom: 3rem;
+                overflow: hidden;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+              }
+              
+              .carousel-container {
+                position: relative;
+                width: 100%;
+                height: 500px;
+                background: linear-gradient(135deg, #f8f4e5 0%, #e9dfc4 100%);
+              }
+              
+              .carousel-slides {
+                width: 100%;
+                height: 100%;
+                position: relative;
+              }
+              
+              .carousel-slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 0.8s ease;
+                display: none;
+              }
+              
+              .carousel-slide.active {
+                opacity: 1;
+                display: block;
+              }
+              
+              .carousel-content {
+                display: flex;
+                height: 100%;
+                padding: 2rem;
+              }
+              
+              .product-info {
+                flex: 1;
+                padding: 2rem;
+                padding-right: 4rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+              }
+              
+              .product-image {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+              }
+              
+              .product-image img {
+                max-width: 100%;
+                max-height: 400px;
+                object-fit: contain;
+                transition: transform 0.5s ease;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                border-radius: 5px;
+              }
+              
+              .carousel-slide.active .product-image img {
+                transform: scale(1);
+              }
+              
+              .product-category {
+                font-size: 1rem;
+                color: #8a7e66;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+              }
+              
+              .product-title {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+                color: #5d4037;
+              }
+              
+              .product-price {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+              }
+              
+              .old-price {
+                text-decoration: line-through;
+                color: #8d8d8d;
+                margin-right: 1rem;
+              }
+              
+              .current-price {
+                color: #c9a66b;
+                font-weight: bold;
+              }
+              
+              .product-description {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: #5d4037;
+                margin-bottom: 1.5rem;
+              }
+              
+              .btn-gold {
+                background-color: #c9a66b;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+              }
+              
+              .btn-gold:hover {
+                background-color: #b18c50;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+              }
+              
+              .carousel-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 40px;
+                height: 40px;
+                background: rgba(201, 166, 107, 0.8);
+                border: none;
+                border-radius: 50%;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                z-index: 10;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              
+              .carousel-nav:hover {
+                background: #c9a66b;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+              }
+              
+              .prev-btn {
+                left: 10px;
+              }
+              
+              .next-btn {
+                right: 25px;
+              }
+              
+              .carousel-indicators {
+                position: absolute;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 10px;
+              }
+              
+              .dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: rgba(201, 166, 107, 0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+              }
+              
+              .dot.active {
+                background: #c9a66b;
+                transform: scale(1.2);
+              }
+              
+              @media (max-width: 768px) {
+                .carousel-content {
+                  flex-direction: column-reverse;
+                }
+                
+                .product-info, .product-image {
+                  flex: none;
+                  width: 100%;
+                }
+                
+                .product-title {
+                  font-size: 2rem;
+                }
+                
+                .carousel-container {
+                  height: 700px;
+                }
+              }
+            </style>
+
+            <script>
+              let currentSlide = 0;
+              const slides = document.querySelectorAll('.carousel-slide');
+              const dots = document.querySelectorAll('.dot');
+              let autoplayInterval;
+              
+              // Инициализация карусели
+              function initCarousel() {
+                showSlide(currentSlide);
+                startAutoplay();
+              }
+              
+              // Показать определенный слайд
+              function showSlide(index) {
+                // Скрыть все слайды и деактивировать все точки
+                slides.forEach(slide => {
+                  slide.classList.remove('active');
+                });
+                
+                dots.forEach(dot => {
+                  dot.classList.remove('active');
+                });
+                
+                // Показать текущий слайд и активировать соответствующую точку
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                
+                currentSlide = index;
+              }
+              
+              // Перейти к следующему слайду
+              function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+                resetAutoplay();
+              }
+              
+              // Перейти к предыдущему слайду
+              function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+                resetAutoplay();
+              }
+              
+              // Перейти к конкретному слайду (по клику на точку)
+              function goToSlide(index) {
+                showSlide(index);
+                resetAutoplay();
+              }
+              
+              // Запустить автоматическое переключение слайдов
+              function startAutoplay() {
+                autoplayInterval = setInterval(nextSlide, 5000);
+              }
+              
+              // Сбросить таймер автоматического переключения
+              function resetAutoplay() {
+                clearInterval(autoplayInterval);
+                startAutoplay();
+              }
+              
+              // Инициализация карусели при загрузке страницы
+              document.addEventListener('DOMContentLoaded', initCarousel);
+            </script>
+
+            <!-- CATEGORIES SECTION-->
+            <section class="pt-5">
+              <header class="text-center">
+                <p class="small text-muted small text-uppercase mb-1">Лучшие коллекции</p>
+                <h2 class="h5 text-uppercase mb-4">Все категории</h2>
+              </header>
+              <div class="row">
+              {% if categories %}
+                {% for category in categories %}
+
+                  <div class="col-md-4 mb-4 mb-md-0">
+                    <a class="category-item" href="{% url 'store:category-products' category.slug %}">
+                      {% if category.category_image %}
+                        <img class="img-fluid" src="{{ category.category_image.url }}" alt="{{ category.title }}">
+                        {% else %}
+                        <img class="img-fluid" src="{% static 'img/cat-img-1.jpg' %}" alt="{{ category.title }}">
+                      {% endif %}
+                      <strong class="category-item-title">{{ category.title }}</strong>
+                    </a>
+                  </div>
+                
+                {% endfor %}
+              {% endif %}
+              </div>
+            </section>
+
+            <!-- TRENDING PRODUCTS-->
+            <section class="py-5">
+              <header>
+                <p class="small text-muted small text-uppercase mb-1">Сделано с любовью</p>
+                <h2 class="h5 text-uppercase mb-4">Популярные изделия</h2>
+              </header>
+              <div class="row">
+
+                {% if products %}
+                  {% for product in products %}
+                  
+                    <!-- PRODUCT-->
+                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                      <div class="product text-center">
+                        <div class="position-relative mb-3">
+                          <div class="badge text-white badge-"></div>
+                          <a class="d-block" href="{% url 'store:product-detail' product.slug %}">
+                            {% if product.product_image %}
+                              <img class="img-fluid w-100" src="{{product.product_image.url}}" alt="{{product.title}}">
+                            {% else %}
+                              <img class="img-fluid w-100" src="{% static 'img/product-1.jpg' %}" alt="{{product.title}}">
+                            {% endif %}
+                          </a>
+                          <div class="product-overlay">
+                            <ul class="mb-0 list-inline">
+                              <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark" href="#"><i class="far fa-heart"></i></a></li>
+                              <li class="list-inline-item m-0 p-0">
+                                <form action="{% url 'store:add-to-cart' %}">
+                                  <input type="hidden" name="prod_id" value="{{product.id}}" id="product_id">
+                                  <button type="submit" class="btn-cart btn-sm">
+                                    <i class="fas fa-shopping-cart"></i>В корзину
+                                  </button>
+                                </form>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <h6> <a class="reset-anchor" href="{% url 'store:product-detail' product.slug %}">{{product.title}}</a></h6>
+                        <p class="small text-muted">₸{{product.price}}</p>
+                      </div>
+                    </div>
+
+                  {% endfor %}
+                {% endif %}
+
+              </div>
+            </section>
+
+            <!-- SERVICES-->
+            <section class="py-5 bg-light">
+              <div class="container">
+                <div class="row text-center">
+                  <div class="col-lg-4 mb-3 mb-lg-0">
+                    <div class="d-inline-block">
+                      <div class="media align-items-end">
+                        <svg class="svg-icon svg-icon-big svg-icon-light">
+                          <use xlink:href="#delivery-time-1"> </use>
+                        </svg>
+                        <div class="media-body text-left ml-3">
+                          <h6 class="text-uppercase mb-1">Бесплатная доставка</h6>
+                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 mb-3 mb-lg-0">
+                    <div class="d-inline-block">
+                      <div class="media align-items-end">
+                        <svg class="svg-icon svg-icon-big svg-icon-light">
+                          <use xlink:href="#helpline-24h-1"> </use>
+                        </svg>
+                        <div class="media-body text-left ml-3">
+                          <h6 class="text-uppercase mb-1">Служба поддержки 24/7</h6>
+                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="d-inline-block">
+                      <div class="media align-items-end">
+                        <svg class="svg-icon svg-icon-big svg-icon-light">
+                          <use xlink:href="#label-tag-1"> </use>
+                        </svg>
+                        <div class="media-body text-left ml-3">
+                          <h6 class="text-uppercase mb-1">Праздничные предложения</h6>
+                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- NEWSLETTER-->
+            <section class="py-5">
+              <div class="container p-0">
+                <div class="row">
+                  <div class="col-lg-6 mb-3 mb-lg-0">
+                    <h5 class="text-uppercase">Рассылка лучших предложении --------></h5>
+                    <p class="text-small text-muted mb-0">Не теряйте время!</p>
+                  </div>
+                  <div class="col-lg-6">
+                    <form action="#">
+                      <div class="input-group flex-column flex-sm-row mb-3">
+                        <input class="form-control form-control-lg py-3" type="email" placeholder="Введите ваш email" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                          <button class="btn btn-dark btn-block" id="button-addon2" type="submit">Подписаться</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      {% endblock content %}

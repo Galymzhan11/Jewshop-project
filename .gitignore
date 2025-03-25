@@ -1,0 +1,37 @@
+# Конфиденциальные файлы
+.env
+.env.local
+.env.development
+.env.production
+config/secrets.yml
+config/database.yml
+
+# Папки с зависимостями
+node_modules/
+vendor/
+bower_components/
+
+# Временные файлы
+tmp/
+temp/
+.cache/
+dist/
+build/
+
+# Логи
+*.log
+logs/
+
+# Файлы операционной системы
+.DS_Store
+Thumbs.db
+
+# Файлы IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Конфиденциальные данные
+*.pem
+*.key
+credentials.json 

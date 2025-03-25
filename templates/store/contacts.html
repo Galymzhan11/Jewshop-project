@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <h1 class="text-center">Контакты</h1>
+            <hr>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Контактная информация -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Наши контакты</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i> 
+                            <strong>Адрес:</strong> ул. Ювелирная, 123, Москва
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-phone me-2"></i> 
+                            <strong>Телефон:</strong> +7 (999) 123-45-67
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-envelope me-2"></i> 
+                            <strong>Email:</strong> info@jewshop.ru
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-clock me-2"></i> 
+                            <strong>Часы работы:</strong><br>
+                            Пн-Пт: 10:00 - 20:00<br>
+                            Сб-Вс: 11:00 - 18:00
+                        </li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Мы в социальных сетях</h4>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="me-3 text-decoration-none">
+                            <i class="fab fa-facebook fa-2x"></i>
+                        </a>
+                        <a href="#" class="me-3 text-decoration-none">
+                            <i class="fab fa-instagram fa-2x"></i>
+                        </a>
+                        <a href="#" class="me-3 text-decoration-none">
+                            <i class="fab fa-vk fa-2x"></i>
+                        </a>
+                        <a href="#" class="text-decoration-none">
+                            <i class="fab fa-telegram fa-2x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Форма обратной связи -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">Напишите нам</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ваше имя</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Тема</label>
+                            <input type="text" class="form-control" id="subject">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Сообщение</label>
+                            <textarea class="form-control" id="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Карта -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Как нас найти</h3>
+                    <div class="map-container mt-3">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.3888876171!2d37.618675!3d55.751244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTXCsDQ1JzA0LjUiTiAzN8KwMzcnMDcuMiJF!5e0!3m2!1sru!2sru!4v1620000000000!5m2!1sru!2sru" 
+                            width="100%" 
+                            height="450" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
