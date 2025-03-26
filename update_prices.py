@@ -11,3 +11,5 @@ from django.db.models import F
 Product.objects.all().update(price=F('price') * 100)
 
 print("Цены успешно обновлены!") 
+
+
