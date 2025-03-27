@@ -219,50 +219,9 @@ def shop(request):
 
 
 
-
-
 def test(request):
     return render(request, 'store/test.html')
 
-def get_featured_products(request):
-    featured_products = [
-        {
-            'title': 'Кольцо с бриллиантом',
-            'category': 'Кольца',
-            'price': 250000,
-            'old_price': 300000,
-            'description': 'Элегантное кольцо из белого золота с бриллиантом 0.5 карат. Идеальное сочетание роскоши и утонченности.',
-            'image': 'img/ring-diamond.jpg'
-        },
-        {
-            'title': 'Колье с сапфирами',
-            'category': 'Ожерелья',
-            'price': 180000,
-            'old_price': 220000,
-            'description': 'Роскошное колье из желтого золота с натуральными сапфирами. Великолепное украшение для особых случаев.',
-            'image': 'img/necklace-sapphire.jpg'
-        },
-        {
-            'title': 'Серьги с изумрудами',
-            'category': 'Серьги',
-            'price': 195000,
-            'old_price': 240000,
-            'description': 'Изысканные серьги из белого золота с изумрудами. Добавьте яркий акцент в ваш образ.',
-            'image': 'img/earrings-emerald.jpg'
-        }
-    ]
-    
-    product = random.choice(featured_products)
-    
-    data = {
-        'title': product['title'],
-        'category': product['category'],
-        'price': product['price'],
-        'old_price': product['old_price'],
-        'description': product['description'],
-        'image_url': static(product['image'])
-    }
-    return JsonResponse(data)
 
 def contacts(request):
     

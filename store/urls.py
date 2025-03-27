@@ -11,7 +11,6 @@ app_name = 'store'
 
 urlpatterns = [
     path('', views.home, name="home"),
-    path('get-featured-products/', views.get_featured_products, name="get-featured-products"),
     # URL for Cart and Checkout
     path('add-to-cart/', views.add_to_cart, name="add-to-cart"),
     path('remove-cart/<int:cart_id>/', views.remove_cart, name="remove-cart"),

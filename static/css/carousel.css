@@ -1,0 +1,90 @@
+.luxury-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #f8f9fa, #f1f1f1);
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  .star {
+    position: absolute;
+    color: gold;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    animation: twinkle 15s infinite ease-in-out;
+  }
+  
+  .star::before {
+    content: "★";
+    display: block;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
+  }
+  
+  @keyframes twinkle {
+    0% {
+      opacity: 0;
+      transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+    }
+    10% {
+      opacity: 0.8;
+      transform: translateY(-10px) translateX(10px) rotate(36deg) scale(1.1);
+    }
+    20% {
+      opacity: 0.4;
+      transform: translateY(-20px) translateX(20px) rotate(72deg) scale(1);
+    }
+    30% {
+      opacity: 0.9;
+      transform: translateY(-30px) translateX(30px) rotate(108deg) scale(1.2);
+    }
+    40% {
+      opacity: 0.5;
+      transform: translateY(-40px) translateX(40px) rotate(144deg) scale(1.1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: translateY(-50px) translateX(50px) rotate(180deg) scale(1);
+    }
+    60% {
+      opacity: 0.4;
+      transform: translateY(-60px) translateX(40px) rotate(216deg) scale(1.2);
+    }
+    70% {
+      opacity: 0.9;
+      transform: translateY(-70px) translateX(30px) rotate(252deg) scale(1.1);
+    }
+    80% {
+      opacity: 0.5;
+      transform: translateY(-80px) translateX(20px) rotate(288deg) scale(1);
+    }
+    90% {
+      opacity: 0.8;
+      transform: translateY(-90px) translateX(10px) rotate(324deg) scale(1.2);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-100px) translateX(0) rotate(360deg) scale(1);
+    }
+  }
+  
+  /* Декоративный узор для фона */
+  .background-pattern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%), 
+      linear-gradient(-45deg, rgba(0,0,0,0.02) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.02) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.02) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    z-index: -2;
+    pointer-events: none;
+  }
