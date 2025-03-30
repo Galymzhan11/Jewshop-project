@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Условия доставки | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Условия доставки</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">Условия доставки</h1>
+    
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow overflow-hidden">
+        <!-- Доставка по Казахстану -->
+        <div class="border-b border-gray-200">
+            <div class="p-6">
+                <h2 class="text-2xl font-semibold mb-4">Доставка по Казахстану</h2>
+                <p class="text-gray-700 mb-6">Мы доставляем наши украшения по всей территории Казахстана, чтобы вы могли наслаждаться нашими изделиями независимо от того, где вы находитесь.</p>
+                
+                <div class="bg-gray-50 p-5 rounded-lg mb-6">
+                    <h3 class="text-xl font-medium mb-3">Курьерская доставка</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Алматы и Астана:</strong> доставка в течение 1-2 рабочих дней</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Областные центры:</strong> доставка в течение 2-3 рабочих дней</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Другие населенные пункты:</strong> доставка в течение 3-5 рабочих дней</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Стоимость:</strong> 2000 тенге для заказов до 50 000 тенге, бесплатно для заказов свыше 50 000 тенге</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg mb-6">
+                    <h3 class="text-xl font-medium mb-3">Доставка в пункты выдачи</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Сроки:</strong> от 2 до 5 рабочих дней в зависимости от региона</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Стоимость:</strong> 1500 тенге для заказов до 50 000 тенге, бесплатно для заказов свыше 50 000 тенге</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Хранение:</strong> 5 дней с момента поступления заказа в пункт выдачи</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg">
+                    <h3 class="text-xl font-medium mb-3">Почтовая доставка</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Сроки:</strong> от 5 до 14 рабочих дней в зависимости от удаленности региона</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Стоимость:</strong> от 1000 тенге в зависимости от веса и региона</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                            <span><strong>Отслеживание:</strong> трек-номер предоставляется после отправки</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>  
+        
+        <!-- Важная информация -->
+        <div>
+            <div class="p-6">
+                <h2 class="text-2xl font-semibold mb-4">Важная информация</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium mb-3">Упаковка и безопасность</h3>
+                    <p class="text-gray-700 mb-2">Все наши изделия тщательно упаковываются в фирменные коробки Jewelisque, которые защищают украшения во время транспортировки. Каждое изделие сопровождается сертификатом подлинности.</p>
+                    <p class="text-gray-700">Для дорогостоящих украшений предусмотрена особая упаковка и страхование доставки.</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-medium mb-3">Проверка при получении</h3>
+                    <p class="text-gray-700">При получении заказа вы имеете право:</p>
+                    <ul class="list-disc pl-6 text-gray-700 mt-2 space-y-1">
+                        <li>Осмотреть упаковку на наличие повреждений</li>
+                        <li>Проверить комплектность заказа</li>
+                        <li>Убедиться в соответствии полученного товара заказанному</li>
+                    </ul>
+                    <p class="text-gray-700 mt-2">В случае обнаружения недостатков, просим вас сообщить об этом курьеру или сделать отметку в накладной.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-medium mb-3">Отслеживание заказа</h3>
+                    <p class="text-gray-700">После оформления заказа вы получите уведомление с номером для отслеживания. Вы всегда можете узнать статус вашего заказа в личном кабинете на нашем сайте или связавшись с нашей службой поддержки.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto mt-8">
+        <div class="bg-secondary bg-opacity-10 p-6 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i class="text-secondary"></i> Остались вопросы?
+            </h2>
+            <p class="text-gray-700 mb-3">Если у вас остались вопросы по доставке, наша служба поддержки с радостью поможет вам:</p>
+            <ul class="text-gray-700 space-y-2">
+                <li class="flex items-center">
+                    <i class="fas fa-phone text-secondary mr-2"></i>
+                    <span>+7 (777) 123-45-67 (ежедневно с 9:00 до 21:00)</span>
+                </li>
+                <li class="flex items-center">
+                    <i class="fas fa-envelope text-secondary mr-2"></i>
+                    <span>info@jewelisque.com</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 

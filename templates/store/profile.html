@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if user.is_superuser %}Панель администратора{% else %}Мой профиль{% endif %} | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">{% if user.is_superuser %}Панель администратора{% else %}Мой профиль{% endif %}</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">{% if user.is_superuser %}Панель администратора{% else %}Мой профиль{% endif %}</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Sidebar -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-6 bg-gray-50 border-b">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 {% if user.is_superuser %}bg-secondary{% else %}bg-gray-200{% endif %} rounded-full flex items-center justify-center mr-4 text-{% if user.is_superuser %}white{% else %}gray-400{% endif %}">
+                            <i class="fas {% if user.is_superuser %}fa-crown{% else %}fa-user{% endif %} text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">{{ request.user.username }}</h2>
+                            <p class="text-gray-500">{{ request.user.email }}</p>
+                            {% if user.is_superuser %}<p class="text-xs bg-secondary text-white px-2 py-1 rounded mt-1 inline-block">Администратор</p>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'store:profile' %}" class="block px-4 py-2 rounded-md bg-gray-100 font-medium">
+                                <i class="fas {% if user.is_superuser %}fa-tachometer-alt{% else %}fa-user{% endif %} mr-2"></i> {% if user.is_superuser %}Панель управления{% else %}Профиль{% endif %}
+                            </a>
+                        </li>
+                        {% if user.is_superuser %}
+                        <li>
+                            <a href="{% url 'store:admin-orders' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-shopping-bag mr-2"></i> Управление заказами
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:admin-reviews' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-star mr-2"></i> Управление отзывами
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/" target="_blank" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-cogs mr-2"></i> Админ-панель Django
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{% url 'store:orders' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-shopping-bag mr-2"></i> Мои заказы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-reviews' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-star mr-2"></i> Мои отзывы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-purchased-products' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-clipboard-list mr-2"></i> Оставить отзыв
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'store:password-change' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-lock mr-2"></i> Изменить пароль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:logout' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100 text-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="md:col-span-2">
+            {% if user.is_superuser %}
+            <!-- Admin Dashboard -->
+            <div class="bg-white rounded-lg shadow mb-8">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Статистика магазина</h2>
+                </div>
+                
+                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2">{{ orders.count }}</div>
+                        <p class="text-gray-600">Всего заказов</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2">{{ pending_orders }}</div>
+                        <p class="text-gray-600">Ожидающих заказов</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-yellow-600 mb-2">{{ recent_reviews }}</div>
+                        <p class="text-gray-600">Новых отзывов</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Orders for Admin -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Последние заказы</h2>
+                    <a href="{% url 'store:admin-orders' %}" class="text-secondary hover:underline">
+                        Посмотреть все
+                    </a>
+                </div>
+                
+                <div class="p-6">
+                    {% if orders %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-gray-600">
+                                    <th class="px-4 py-3 font-medium">Заказ №</th>
+                                    <th class="px-4 py-3 font-medium">Товар</th>
+                                    <th class="px-4 py-3 font-medium">Клиент</th>
+                                    <th class="px-4 py-3 font-medium">Дата</th>
+                                    <th class="px-4 py-3 font-medium">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                {% for order in orders|slice:":5" %}
+                                <tr>
+                                    <td class="px-4 py-4 text-gray-600">
+                                        {{ order.order_number }}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-md overflow-hidden mr-3">
+                                                {% if order.product.product_image %}
+                                                <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}" class="w-full h-full object-cover">
+                                                {% else %}
+                                                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                                    <i class="fas fa-image"></i>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <p class="font-medium line-clamp-1">{{ order.product.title }}</p>
+                                                <p class="text-gray-500 text-sm">{{ order.quantity }} x {{ order.product.price }} ₸</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-600">
+                                        {{ order.user.username }}
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-600">
+                                        {{ order.ordered_date|date:"d.m.Y" }}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full 
+                                            {% if order.status == 'Delivered' %}bg-green-100 text-green-800
+                                            {% elif order.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                                            {% elif order.status == 'Cancelled' %}bg-red-100 text-red-800
+                                            {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">В магазине пока нет заказов</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <!-- Regular User Content -->
+            <!-- Addresses -->
+            <div class="bg-white rounded-lg shadow mb-8">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Мои адреса</h2>
+                    <a href="{% url 'store:add-address' %}" class="inline-flex items-center text-secondary hover:underline">
+                        <i class="fas fa-plus-circle mr-1"></i> Добавить новый адрес
+                    </a>
+                </div>
+                
+                <div class="p-6">
+                    {% if addresses %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for address in addresses %}
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex justify-between mb-2">
+                                <h3 class="font-medium">{{ address.locality }}</h3>
+                                <a href="{% url 'store:remove-address' address.id %}" class="text-red-500 text-sm hover:underline" onclick="return confirm('Вы уверены, что хотите удалить этот адрес?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                            <p class="text-gray-600">{{ address.city }}, {{ address.state }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 mb-4">У вас нет сохраненных адресов</p>
+                        <a href="{% url 'store:add-address' %}" class="inline-flex items-center text-secondary hover:underline">
+                            <i class="fas fa-plus-circle mr-1"></i> Добавить новый адрес
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Orders for Regular User -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Недавние заказы</h2>
+                    <a href="{% url 'store:orders' %}" class="text-secondary hover:underline">
+                        Посмотреть все
+                    </a>
+                </div>
+                
+                <div class="p-6">
+                    {% if orders %}
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-gray-600">
+                                    <th class="px-4 py-3 font-medium">Товар</th>
+                                    <th class="px-4 py-3 font-medium">Дата</th>
+                                    <th class="px-4 py-3 font-medium">Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                {% for order in orders|slice:":3" %}
+                                <tr>
+                                    <td class="px-4 py-4">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 rounded-md overflow-hidden mr-3">
+                                                {% if order.product.product_image %}
+                                                <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}" class="w-full h-full object-cover">
+                                                {% else %}
+                                                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                                    <i class="fas fa-image"></i>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <p class="font-medium line-clamp-1">{{ order.product.title }}</p>
+                                                <p class="text-gray-500 text-sm">{{ order.quantity }} x {{ order.product.price }} ₸</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 text-gray-600">
+                                        {{ order.ordered_date|date:"d.m.Y" }}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full 
+                                            {% if order.status == 'Delivered' %}bg-green-100 text-green-800
+                                            {% elif order.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                                            {% elif order.status == 'Cancelled' %}bg-red-100 text-red-800
+                                            {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 mb-4">У вас пока нет заказов</p>
+                        <a href="{% url 'store:all-categories' %}" class="px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+                            Начать покупки
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

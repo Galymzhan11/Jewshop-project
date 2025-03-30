@@ -1,56 +1,65 @@
 {% extends 'base.html' %}
-{% load static %}
 
-    {% block content %}
+{% block title %}Вход | Jewelisque{% endblock %}
 
-      <div class="container py-5">
-        <div class="col-md-8 offset-2">
-
-        <h1 class="mb-5">Войти в свой аккаунт</h1>
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Вход</span>
+    </div>
+    
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center">Вход в аккаунт</h1>
         
-        
-        <div class="card mb-4" id="forms">
-          
-          <div class="card-body">
-              
-            {% include 'partials/_messages.html' %}
-
-            <form method="post" action="">
-              <fieldset>
-                {% csrf_token %}
-
-                {% for fm in form %}
-                    <div class="form-group">
-                        {{fm.label_tag}}
-                        {{fm}}
-                        <small class="text-danger">{{fm.errors|striptags}}</small>
-                    </div>
-                {% endfor %}
-                <button class="btn btn-primary" type="submit">Войти</button>
-              </fieldset>
-
-              {% if form.non_field_errors %}
-                {% for error in form.non_field_errors %}
-                    <p class="alert alert-danger my-3">
-                        {{error}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Закрыть">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </p>
-                {% endfor %}
-              {% endif %}
-
-
-            </form>
-
-            <hr>
-
-            Забыли пароль? <a href="{% url 'store:password-reset' %}">Восстановить</a> <br>
-            Новый пользователь? <a href="{% url 'store:register' %}">Создать аккаунт</a> 
+        <form method="post" novalidate class="space-y-6">
+            {% csrf_token %}
             
-          </div>
-        </div>
-
-        </div>       
-      </div>
-{% endblock content %}
+            {% if form.non_field_errors %}
+            <div class="p-3 bg-red-50 text-red-600 rounded-md">
+                {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 font-medium">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block mb-2 font-medium">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.password.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="flex justify-end mt-1">
+                    <a href="{% url 'store:password-reset' %}" class="text-sm text-secondary hover:underline">Забыли пароль?</a>
+                </div>
+            </div>
+            
+            <div>
+                <button type="submit" class="w-full py-3 bg-black text-white font-medium rounded-md hover:bg-opacity-90 transition">Войти</button>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-600">Нет аккаунта? <a href="{% url 'store:register' %}" class="text-secondary hover:underline">Зарегистрироваться</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

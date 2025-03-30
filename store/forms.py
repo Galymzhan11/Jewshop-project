@@ -9,6 +9,7 @@ from django.db.models import fields
 from django.forms import widgets
 from django.forms.fields import CharField
 from django.utils.translation import gettext, gettext_lazy as _
+from .models import Review, RATING_CHOICES
 
 
 
@@ -25,8 +26,19 @@ class RegistrationForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Имя пользователя'}))
-    password = forms.CharField(label=_("Пароль"), strip=False, widget=forms.PasswordInput(attrs={'autocomplete':'current-password', 'class':'form-control', 'placeholder': 'Пароль'}))
+    username = UsernameField(widget=forms.TextInput(attrs={
+        'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+        'placeholder': 'Имя пользователя'
+    }))
+    password = forms.CharField(
+        label=_("Пароль"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Пароль',
+            'autocomplete': 'current-password'
+        })
+    )
 
 
 class AddressForm(forms.ModelForm):
@@ -53,4 +65,27 @@ class PasswordResetForm(PasswordResetForm):
 class SetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(label=_("Новый пароль"), strip=False, widget=forms.PasswordInput(attrs={'autocomplete':'new-password', 'class':'form-control', 'placeholder': 'Новый пароль'}), help_text=password_validation.password_validators_help_text_html())
     new_password2 = forms.CharField(label=_("Подтвердите новый пароль"), strip=False, widget=forms.PasswordInput(attrs={'autocomplete':'new-password', 'class':'form-control', 'placeholder': 'Подтвердите новый пароль'}))
+
+
+class ReviewForm(forms.ModelForm):
+    """Форма для добавления отзывов к товарам"""
+    
+    rating = forms.ChoiceField(
+        choices=RATING_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'rating-input'}),
+        label="Оценка"
+    )
+    
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Напишите ваш отзыв о товаре',
+            'rows': 4
+        }),
+        label="Ваш отзыв"
+    )
+    
+    class Meta:
+        model = Review
+        fields = ['rating', 'comment']
 

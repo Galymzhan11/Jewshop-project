@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Мои отзывы | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Мои отзывы</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">Мои отзывы</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-6 bg-gray-50 border-b">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4 text-gray-400">
+                            <i class="fas fa-user text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">{{ request.user.username }}</h2>
+                            <p class="text-gray-500">{{ request.user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'store:profile' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i> Профиль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:orders' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-shopping-bag mr-2"></i> Мои заказы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-reviews' %}" class="block px-4 py-2 rounded-md bg-gray-100 font-medium">
+                                <i class="fas fa-star mr-2"></i> Мои отзывы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-purchased-products' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-clipboard-list mr-2"></i> Оставить отзыв
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:password-change' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-lock mr-2"></i> Изменить пароль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:logout' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100 text-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reviews -->
+        <div class="md:col-span-3">
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Ваши отзывы</h2>
+                    <p class="text-gray-600 mt-1">Здесь отображаются все ваши отзывы на купленные товары</p>
+                </div>
+                
+                {% if reviews %}
+                <div class="divide-y">
+                    {% for review in reviews %}
+                    <div class="p-6">
+                        <div class="flex items-start">
+                            <div class="w-16 h-16 rounded-md overflow-hidden mr-4">
+                                {% if review.product.product_image %}
+                                <img src="{{ review.product.product_image.url }}" alt="{{ review.product.title }}" class="w-full h-full object-cover">
+                                {% else %}
+                                <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1">
+                                <a href="{% url 'store:product-detail' review.product.slug %}" class="text-lg font-medium hover:text-secondary">
+                                    {{ review.product.title }}
+                                </a>
+                                
+                                <div class="flex items-center mt-2">
+                                    <div class="flex">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-yellow-400"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="ml-2 text-sm text-gray-600">{{ review.created_at|date:"d.m.Y" }}</span>
+                                </div>
+                                
+                                <div class="mt-3 text-gray-700">
+                                    {{ review.comment }}
+                                </div>
+                                
+                                <div class="mt-4 flex space-x-3">
+                                    <a href="{% url 'store:edit-review' review.id %}" class="text-sm text-blue-600 hover:underline">
+                                        <i class="fas fa-edit mr-1"></i> Редактировать
+                                    </a>
+                                    <a href="{% url 'store:delete-review' review.id %}" class="text-sm text-red-600 hover:underline">
+                                        <i class="fas fa-trash-alt mr-1"></i> Удалить
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-16">
+                    <div class="mb-6 text-gray-400">
+                        <i class="fas fa-comment-alt text-6xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">У вас пока нет отзывов</h3>
+                    <p class="text-gray-600 mb-8">Вы можете оставить отзыв на товары, которые вы уже купили</p>
+                    <a href="{% url 'store:my-purchased-products' %}" class="px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+                        Оставить отзыв
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

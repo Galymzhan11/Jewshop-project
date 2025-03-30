@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавить адрес | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Добавить адрес</span>
+    </div>
+    
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-8 text-center">Добавить новый адрес</h1>
+        
+        <div class="bg-white rounded-lg shadow p-8">
+            <form method="post" novalidate class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="{{ form.locality.id_for_label }}" class="block mb-2 font-medium">{{ form.locality.label }}</label>
+                    {{ form.locality }}
+                    {% if form.locality.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.locality.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.city.id_for_label }}" class="block mb-2 font-medium">{{ form.city.label }}</label>
+                    {{ form.city }}
+                    {% if form.city.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.city.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.state.id_for_label }}" class="block mb-2 font-medium">{{ form.state.label }}</label>
+                    {{ form.state }}
+                    {% if form.state.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.state.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'store:profile' %}" class="text-gray-600 hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Назад к профилю
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-opacity-90 transition">Сохранить адрес</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

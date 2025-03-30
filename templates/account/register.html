@@ -1,55 +1,86 @@
 {% extends 'base.html' %}
-{% load static %}
 
-    {% block content %}
+{% block title %}Регистрация | Jewelisque{% endblock %}
 
-      <div class="container py-5">
-        <div class="col-md-8 offset-2">
-
-        <h1 class="mb-5">Создайте свой аккаунт</h1>
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Регистрация</span>
+    </div>
+    
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center">Создать аккаунт</h1>
         
-        
-        <div class="card mb-4" id="forms">
-          <div class="card-header">
-            <small>
-            С этим аккаунтом вы сможете сэкономить время при оформлении заказа, получить доступ к своей корзине с любого устройства и просматривать историю заказов.
-            </small>
-          </div>
-          <div class="card-body">
-
-            {% include 'partials/_messages.html' %}
-
-            <form method="post" action="">
-              <fieldset>
-                {% csrf_token %}
-
-                {% for fm in form %}
-                    <div class="form-group">
-                        {{fm.label_tag}}
-                        {{fm}}
-                        <small class="text-danger">{{fm.errors|striptags}}</small>
-                    </div>
-                {% endfor %}
-                <button class="btn btn-primary" type="submit">Отправить</button>
-              </fieldset>
-
-              {% if form.non_field_errors %}
-                {% for error in form.non_field_errors %}
-                    <p class="alert alert-danger alert-dismissible fade show" role="alert" my-3">
-                        {{error}}
-                    </p>
-                {% endfor %}
-              {% endif %}
-
-            </form>
-
-            <hr>
-
-            Уже есть аккаунт? <a href="{% url 'store:login' %}">Войдите</a>
+        <form method="post" novalidate class="space-y-6">
+            {% csrf_token %}
             
-          </div>
-        </div>
-
-        </div>       
-      </div>
-{% endblock content %}
+            <div>
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 font-medium">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Буквы, цифры и @/./+/-/_ только.</p>
+            </div>
+            
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block mb-2 font-medium">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.email.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <label for="{{ form.password1.id_for_label }}" class="block mb-2 font-medium">{{ form.password1.label }}</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.password1.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <ul class="text-gray-500 text-sm mt-1 list-disc list-inside">
+                    <li>Пароль не должен быть слишком похож на другую вашу личную информацию.</li>
+                    <li>Пароль должен содержать не менее 8 символов.</li>
+                    <li>Пароль не может быть обычно используемым паролем.</li>
+                    <li>Пароль не может состоять только из цифр.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block mb-2 font-medium">{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <div class="text-red-600 text-sm mt-1">
+                    {% for error in form.password2.errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <p class="text-gray-500 text-sm mt-1">Введите пароль повторно для проверки.</p>
+            </div>
+            
+            <div>
+                <button type="submit" class="w-full py-3 bg-black text-white font-medium rounded-md hover:bg-opacity-90 transition">Зарегистрироваться</button>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-600">Уже есть аккаунт? <a href="{% url 'store:login' %}" class="text-secondary hover:underline">Войти</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

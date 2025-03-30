@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}О нас | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">О нас</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">О нас</h1>
+    
+    <!-- Our Story -->
+    <div class="max-w-4xl mx-auto mb-16">
+        <h2 class="text-2xl font-semibold mb-6 text-center">Наша история</h2>
+        <div class="flex flex-col md:flex-row items-center gap-8">
+            <div class="md:w-1/2">
+                <img src="/media/logo/logo.png" alt="Наш магазин" class="rounded-lg shadow-lg w-full h-auto" onerror="this.src='/static/images/about.jpg'">
+            </div>
+            <div class="md:w-1/2">
+                <p class="text-gray-700 mb-4">Jewelisque была основана в 2025 году группой энтузиастов ювелирного дела с единственной целью — создать бренд, который бы сочетал в себе традиционное мастерство и современные тенденции.</p>
+                <p class="text-gray-700 mb-4">Начиная с маленькой мастерской в Алматы, мы выросли в компанию с собственным производством и сетью магазинов по всему Казахстану. Мы гордимся тем, что предлагаем нашим клиентам изделия высочайшего качества, созданные с любовью и вниманием к деталям.</p>
+                <p class="text-gray-700">За прошедшие годы мы завоевали доверие тысяч клиентов и продолжаем расти, сохраняя наши ценности и стремление к совершенству в каждом ювелирном изделии.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Our Values -->
+    <div class="bg-gray-50 py-12 px-4 mb-16">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-semibold mb-8 text-center">Наши ценности</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Качество</h3>
+                    <p class="text-gray-700">Мы используем только лучшие материалы и строго контролируем процесс производства на каждом этапе, чтобы гарантировать безупречное качество наших изделий.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Доверие</h3>
+                    <p class="text-gray-700">Мы строим долгосрочные отношения с нашими клиентами, основанные на честности, прозрачности и индивидуальном подходе к каждому.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Инновации</h3>
+                    <p class="text-gray-700">Мы постоянно совершенствуем наши технологии и дизайн, сочетая традиционные методы с современными подходами для создания уникальных изделий.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Our Stores -->
+    <div class="bg-gray-50 py-12 px-4 mb-16">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-semibold mb-8 text-center">Наши магазины</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-3">Jewelisque Алматы</h3>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <p class="text-gray-700">address</p>
+                    </div>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-gray-700">Пн-Вс: 10:00 - 21:00</p>
+                    </div>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        <p class="text-gray-700">+7 (727) 291-55-77</p>
+                    </div>
+                    <div class="mb-4">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2906.4517013720716!2d76.93894!3d43.238493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38836eb10bd27459%3A0x39ba3c07ffc28fb2!2z0JTQvtGB0YLRi9C6INC_0YDQvtGB0L8uLCDQkNC70LzQsNGC0YsgMDUwMDAw!5e0!3m2!1sru!2skz!4v1711632201144!5m2!1sru!2skz" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-3">Jewelisque Астана</h3>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <p class="text-gray-700">address</p>
+                    </div>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="text-gray-700">Пн-Вс: 10:00 - 22:00</p>
+                    </div>
+                    <div class="flex items-start mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                        <p class="text-gray-700">+7 (7172) 57-22-33</p>
+                    </div>
+                    <div class="mb-4">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2502.909044441868!2d71.4061388!3d51.1225847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4245840f91771d17%3A0x7e3ed33c7c12fc02!2z0KXQsNC9INCo0LDRgtGL0YA!5e0!3m2!1sru!2skz!4v1711632275234!5m2!1sru!2skz" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

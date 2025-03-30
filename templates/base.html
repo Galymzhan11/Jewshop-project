@@ -1,57 +1,277 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block metatitle %}Ювелирный магазин | Django Ecommerce{% endblock metatitle %}</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="all,follow">
-    <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-    <!-- Lightbox-->
-    <link rel="stylesheet" href="{% static 'vendor/lightbox2/css/lightbox.min.css' %}">
-    <!-- Range slider-->
-    <link rel="stylesheet" href="{% static 'vendor/nouislider/nouislider.min.css' %}">
-    <!-- Bootstrap select-->
-    <link rel="stylesheet" href="{% static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
-    <!-- Owl Carousel-->
-    <link rel="stylesheet" href="{% static 'vendor/owl.carousel2/assets/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'vendor/owl.carousel2/assets/owl.theme.default.css' %}">
-    <!-- Google fonts-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;700&amp;display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@300;400;800&amp;display=swap">
-    <!-- тема стиль-->
-    <link rel="stylesheet" href="{% static 'css/style.default.css' %}" id="theme-stylesheet">
-    <!-- Кастомный стиль - для ваших изменений-->
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-    <!-- Иконка сайта-->
-    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
-
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/carousel.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  </head>
-  <body>
-    <div class="page-holder">
-      <!-- Элегантный фон с анимацией звезд -->
-      <div class="luxury-background" id="luxury-background"></div>
-      <div class="background-pattern"></div>
-
-      {% include 'navbar.html' %}
-
-      {% block content %}
-
-      {% endblock content %}
-
-      {% block payment-gateway %}{% endblock payment-gateway %}
-      
-      {% include 'footer.html' %}
-      {% include 'scripts.html' %}
-      <script src="{% static 'js/carousel.js' %}">
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jewelisque{% endblock %}</title>
+    {% load static %}
+    {% load store_tags %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/base_style.css' %}">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#D4AF37', // Золотой цвет
+                        accent: '#f3f4f6',
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Шапка сайта -->
+    <header class="bg-white shadow-sm">
+        <!-- Верхняя полоса -->
+        <div class="bg-black text-white py-2">
+            <div class="container mx-auto px-4 flex justify-between items-center text-sm">
+                <div>
+                    <span><i class="fas fa-phone-alt mr-1"></i> +7 (777) 123-45-67</span>
+                    <span class="mx-4 border-l border-gray-500 h-4 inline-block align-middle"></span>
+                    <span><i class="far fa-envelope mr-1"></i> info@jewelisque.com</span>
+                </div>
+                <div class="flex items-center">
+                    {% if request.user.is_authenticated %}
+                    <a href="{% url 'store:profile' %}" class="mr-4 hover:text-secondary transition">
+                        <i class="fas fa-user mr-1"></i> {{ request.user.username }}
+                    </a>
+                    <a href="{% url 'store:logout' %}" class="hover:text-secondary transition">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Выйти
+                    </a>
+                    {% else %}
+                    <a href="{% url 'store:login' %}" class="mr-4 hover:text-secondary transition">
+                        <i class="fas fa-sign-in-alt mr-1"></i> Войти
+                    </a>
+                    <a href="{% url 'store:register' %}" class="hover:text-secondary transition">
+                        <i class="fas fa-user-plus mr-1"></i> Регистрация
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         
-      </script>
-  </body>
-</html>
+        <!-- Основная навигация -->
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Логотип -->
+                <a href="{% url 'store:home' %}" class="flex items-center">
+                    <img src="{% get_media_prefix %}logo/logo.png" alt="Jewelisque" class="logo-img">
+                    <span class="logo-divider border-l border-gray-300"></span>
+                    <span class="site-title">Jewel<span class="gold-text">isque</span></span>
+                </a>
+                
+                <!-- Навигация для десктопов -->
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="{% url 'store:home' %}" class="nav-link">Главная</a>
+                    <a href="{% url 'store:all-categories' %}" class="nav-link">Категории</a>
+                    {% for category in menu_categories %}
+                    <a href="{% url 'store:category-products' category.slug %}" class="nav-link">{{ category.title }}</a>
+                    {% endfor %}
+                    <a href="{% url 'store:contacts' %}" class="nav-link">Контакты</a>
+                </nav>
+                
+                <!-- Иконки поиск/корзина -->
+                <div class="flex items-center space-x-6">
+                    <button id="search-toggle" class="text-gray-700 hover:text-secondary transition">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    
+                    <a href="{% url 'store:cart' %}" class="text-gray-700 hover:text-secondary transition relative">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        {% if cart_count > 0 %}
+                        <span class="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-secondary text-white text-xs flex items-center justify-center">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    <!-- Кнопка мобильного меню -->
+                    <button id="mobile-menu-toggle" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Мобильное меню (скрыто по умолчанию) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-2">
+                <div class="flex justify-center my-4 items-center">
+                    <img src="{% get_media_prefix %}logo/logo.png" alt="Jewelisque" class="logo-img">
+                    <span class="logo-divider border-l border-gray-300"></span>
+                    <span class="site-title">Jewel<span class="gold-text">isque</span></span>
+                </div>
+                <nav class="flex flex-col space-y-2 py-4">
+                    <a href="{% url 'store:home' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Главная</a>
+                    <a href="{% url 'store:all-categories' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Категории</a>
+                    {% for category in menu_categories %}
+                    <a href="{% url 'store:category-products' category.slug %}" class="py-2 px-4 hover:bg-gray-100 rounded">{{ category.title }}</a>
+                    {% endfor %}
+                    <a href="{% url 'store:contacts' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Контакты</a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Поисковая строка (скрыта по умолчанию) -->
+        <div id="search-bar" class="hidden border-t">
+            <div class="container mx-auto px-4 py-4">
+                <form action="{% url 'store:search' %}" method="get" class="flex">
+                    <input type="text" name="q" placeholder="Поиск товаров..." class="flex-grow border-2 border-r-0 border-gray-300 px-4 py-2 rounded-l-md focus:outline-none focus:border-secondary">
+                    <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-r-md hover:bg-opacity-90 transition">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Сообщения -->
+    {% if messages %}
+    <div class="container mx-auto px-4 mt-4">
+        {% for message in messages %}
+        <div id="message-{{ forloop.counter }}" class="p-4 mb-4 {% if message.tags == 'success' %}bg-green-50 text-green-600 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-600 border border-red-200{% else %}bg-blue-50 text-blue-600 border border-blue-200{% endif %} rounded-lg relative">
+            {{ message }}
+            <button onclick="closeMessage('message-{{ forloop.counter }}')" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Основное содержимое -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Подвал сайта -->
+    <footer class="bg-gray-800 text-white pt-12 pb-6 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- О компании -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">О Jewelisque</h3>
+                    <div class="mb-4 flex items-center">
+                        <img src="{% get_media_prefix %}logo/logo.png" alt="Jewelisque" class="footer-logo">
+                        <span class="logo-divider border-l border-gray-600"></span>
+                        <span class="site-title text-white">Jewel<span class="gold-text">isque</span></span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Мы предлагаем эксклюзивные ювелирные изделия высочайшего качества по доступным ценам. Наши украшения созданы для тех, кто ценит индивидуальность и стиль.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://instagram.com" target="_blank" class="text-gray-400 hover:text-secondary transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://t.me" target="_blank" class="text-gray-400 hover:text-secondary transition">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="text-gray-400 hover:text-secondary transition">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Категории -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Категории</h3>
+                    <ul class="space-y-2">
+                        {% for category in menu_categories %}
+                        <li>
+                            <a href="{% url 'store:category-products' category.slug %}" class="text-gray-400 hover:text-secondary transition">{{ category.title }}</a>
+                        </li>
+                        {% endfor %}
+                        <li>
+                            <a href="{% url 'store:all-categories' %}" class="text-gray-400 hover:text-secondary transition">Все категории</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Полезные ссылки -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Полезные ссылки</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="{% url 'store:home' %}" class="text-gray-400 hover:text-secondary transition">Главная</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:contacts' %}" class="text-gray-400 hover:text-secondary transition">Контакты</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:about' %}" class="text-gray-400 hover:text-secondary transition">О нас</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:shipping' %}" class="text-gray-400 hover:text-secondary transition">Условия доставки</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:privacy' %}" class="text-gray-400 hover:text-secondary transition">Политика конфиденциальности</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Подписка и контакты -->
+                <div>
+                    
+                    <h3 class="text-xl font-bold mb-4">Контакты</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-2 text-secondary"></i>
+                            <span class="text-gray-400">г. Алматы, ул. Абая 10, офис 305</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone mt-1 mr-2 text-secondary"></i>
+                            <span class="text-gray-400">+7 (777) 123-45-67</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mt-1 mr-2 text-secondary"></i>
+                            <span class="text-gray-400">info@jewelisque.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Разделитель -->
+            <div class="border-t border-gray-700 pt-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 Jewelisque. Все права защищены.</p>
+                    <div class="flex space-x-6">
+                        <i class="fab fa-cc-visa text-white text-2xl" title="Visa"></i>
+                        <i class="fab fa-cc-mastercard text-white text-2xl" title="Mastercard"></i>
+                        <i class="fab fa-cc-paypal text-white text-2xl" title="PayPal"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript для интерактивных элементов -->
+    <script src="{% static 'js/base_interactive.js' %}"></script>
+    
+    <!-- JavaScript для автоматического скрытия сообщений -->
+    <script>
+        // Функция для закрытия сообщения
+        function closeMessage(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        
+        // Автоматическое скрытие сообщений через 5 секунд
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('[id^="message-"]');
+            messages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.display = 'none';
+                }, 5000);
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

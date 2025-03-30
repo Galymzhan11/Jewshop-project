@@ -1,499 +1,317 @@
 {% extends 'base.html' %}
 {% load static %}
 
-      {% block content %}
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <!-- FEATURED PRODUCTS SHOWCASE -->
-            <section class="product-carousel mb-5">
-              <div class="carousel-container">
-                <!-- Слайды -->
-                <div class="carousel-slides">
-                  <!-- Слайд 1 -->
-                  <div class="carousel-slide active">
-                    <div class="carousel-content">
-                      <div class="product-info">
-                        <span class="product-category">Кольца</span>
-                        <h2 class="product-title">Золотое кольцо с бриллиантом</h2>
-                        <div class="product-price">
-                          <span class="old-price">₸300,000</span>
-                          <span class="current-price">₸250,000</span>
-                        </div>
-                        <p class="product-description">Изысканное кольцо из белого золота 585 пробы с бриллиантом круглой огранки. Идеальный выбор для особого случая или в качестве помолвочного кольца.</p>
-                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
-                      </div>
-                      <div class="product-image">
-                        <img src="/media/product/Gold-Ring-with-White-Stone.jpg" alt="Золотое кольцо с бриллиантом">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Слайд 2 -->
-                  <div class="carousel-slide">
-                    <div class="carousel-content">
-                      <div class="product-info">
-                        <span class="product-category">Ожерелья</span>
-                        <h2 class="product-title">Серебряное колье с подвеской</h2>
-                        <div class="product-price">
-                          <span class="old-price">₸220,000</span>
-                          <span class="current-price">₸180,000</span>
-                        </div>
-                        <p class="product-description">Элегантное колье из серебра 925 пробы с подвеской, украшенной фианитами. Подчеркнет вашу индивидуальность и станет прекрасным дополнением к любому образу.</p>
-                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
-                      </div>
-                      <div class="product-image">
-                        <img src="/media/product/Silver-Necklace-with-Big-Diamond.jpg" alt="Серебряное колье с подвеской">
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Слайд 3 -->
-                  <div class="carousel-slide">
-                    <div class="carousel-content">
-                      <div class="product-info">
-                        <span class="product-category">Серьги</span>
-                        <h2 class="product-title">Золотые серьги с жемчугом</h2>
-                        <div class="product-price">
-                          <span class="old-price">₸240,000</span>
-                          <span class="current-price">₸195,000</span>
-                        </div>
-                        <p class="product-description">Роскошные серьги из желтого золота 585 пробы с натуральным жемчугом и бриллиантами. Идеальное украшение для вечернего выхода или особого события.</p>
-                        <a href="{% url 'store:all-categories' %}" class="btn btn-gold">Смотреть коллекцию</a>
-                      </div>
-                      <div class="product-image">
-                        <img src="/media/product/Gold-Star-Earrings.jpg" alt="Золотые серьги с жемчугом">
-                      </div>
-                    </div>
-                  </div>
+{% block title %}Jewelisque - Ювелирные украшения{% endblock %}
+
+{% block extra_css %}
+<style>
+    .carousel {
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .carousel-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 3s ease-in-out;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .carousel-slide.active {
+        opacity: 1;
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+    }
+    
+    .carousel-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+        z-index: 5;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-content {
+            margin: 0 auto;
+            max-width: 90%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative h-[600px]">
+    <!-- Carousel -->
+    <div class="carousel absolute inset-0">
+        <div class="carousel-slide active" style="background-image: url('/media/carousel/Z.jpg');"></div>
+        <div class="carousel-slide" style="background-image: url('/media/carousel/9k_.jpg');"></div>
+        <div class="carousel-overlay"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 h-full flex items-center">
+        <div class="hero-content max-w-lg">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">Изысканность, <span class="gold-text">завернутая в золото</span></h1>
+            <p class="text-gray-600 mb-8 text-lg">Покупайте с уверенностью</p>
+            
+            <div class="space-y-3 mb-10">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-secondary mr-2"></i>
+                    <p class="font-medium">Устойчивость к воде и духам</p>
                 </div>
-                
-                <!-- Кнопки навигации -->
-                <button class="carousel-nav prev-btn" onclick="prevSlide()">&#10094;</button>
-                <button class="carousel-nav next-btn" onclick="nextSlide()">&#10095;</button>
-                
-                <!-- Индикаторы слайдов (точки) -->
-                <div class="carousel-indicators">
-                  <span class="dot active" onclick="goToSlide(0)"></span>
-                  <span class="dot" onclick="goToSlide(1)"></span>
-                  <span class="dot" onclick="goToSlide(2)"></span>
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-secondary mr-2"></i>
+                    <p class="font-medium">2 года гарантии</p>
                 </div>
-              </div>
-            </section>
-
-            <style>
-              .product-carousel {
-                margin-top: 50px;
-                position: relative;
-                margin-bottom: 3rem;
-                overflow: hidden;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-              }
-              
-              .carousel-container {
-                position: relative;
-                width: 100%;
-                height: 500px;
-                background: linear-gradient(135deg, #f8f4e5 0%, #e9dfc4 100%);
-              }
-              
-              .carousel-slides {
-                width: 100%;
-                height: 100%;
-                position: relative;
-              }
-              
-              .carousel-slide {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                transition: opacity 0.8s ease;
-                display: none;
-              }
-              
-              .carousel-slide.active {
-                opacity: 1;
-                display: block;
-              }
-              
-              .carousel-content {
-                display: flex;
-                height: 100%;
-                padding: 2rem;
-              }
-              
-              .product-info {
-                flex: 1;
-                padding: 2rem;
-                padding-right: 4rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-              }
-              
-              .product-image {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-              }
-              
-              .product-image img {
-                max-width: 100%;
-                max-height: 400px;
-                object-fit: contain;
-                transition: transform 0.5s ease;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-                border-radius: 5px;
-              }
-              
-              .carousel-slide.active .product-image img {
-                transform: scale(1);
-              }
-              
-              .product-category {
-                font-size: 1rem;
-                color: #8a7e66;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-bottom: 0.5rem;
-                font-weight: 600;
-              }
-              
-              .product-title {
-                font-size: 2.5rem;
-                margin-bottom: 1rem;
-                color: #5d4037;
-              }
-              
-              .product-price {
-                font-size: 1.5rem;
-                margin-bottom: 1rem;
-              }
-              
-              .old-price {
-                text-decoration: line-through;
-                color: #8d8d8d;
-                margin-right: 1rem;
-              }
-              
-              .current-price {
-                color: #c9a66b;
-                font-weight: bold;
-              }
-              
-              .product-description {
-                font-size: 1.1rem;
-                line-height: 1.6;
-                color: #5d4037;
-                margin-bottom: 1.5rem;
-              }
-              
-              .btn-gold {
-                background-color: #c9a66b;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-              }
-              
-              .btn-gold:hover {
-                background-color: #b18c50;
-                color: white;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-              }
-              
-              .carousel-nav {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 40px;
-                height: 40px;
-                background: rgba(201, 166, 107, 0.8);
-                border: none;
-                border-radius: 50%;
-                color: white;
-                font-size: 18px;
-                cursor: pointer;
-                z-index: 10;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              }
-              
-              .carousel-nav:hover {
-                background: #c9a66b;
-                box-shadow: 0 0 10px rgba(0,0,0,0.2);
-              }
-              
-              .prev-btn {
-                left: 10px;
-              }
-              
-              .next-btn {
-                right: 25px;
-              }
-              
-              .carousel-indicators {
-                position: absolute;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                gap: 10px;
-              }
-              
-              .dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: rgba(201, 166, 107, 0.3);
-                cursor: pointer;
-                transition: all 0.3s ease;
-              }
-              
-              .dot.active {
-                background: #c9a66b;
-                transform: scale(1.2);
-              }
-              
-              @media (max-width: 768px) {
-                .carousel-content {
-                  flex-direction: column-reverse;
-                }
-                
-                .product-info, .product-image {
-                  flex: none;
-                  width: 100%;
-                }
-                
-                .product-title {
-                  font-size: 2rem;
-                }
-                
-                .carousel-container {
-                  height: 700px;
-                }
-              }
-            </style>
-
-            <script>
-              let currentSlide = 0;
-              const slides = document.querySelectorAll('.carousel-slide');
-              const dots = document.querySelectorAll('.dot');
-              let autoplayInterval;
-              
-              // Инициализация карусели
-              function initCarousel() {
-                showSlide(currentSlide);
-                startAutoplay();
-              }
-              
-              // Показать определенный слайд
-              function showSlide(index) {
-                // Скрыть все слайды и деактивировать все точки
-                slides.forEach(slide => {
-                  slide.classList.remove('active');
-                });
-                
-                dots.forEach(dot => {
-                  dot.classList.remove('active');
-                });
-                
-                // Показать текущий слайд и активировать соответствующую точку
-                slides[index].classList.add('active');
-                dots[index].classList.add('active');
-                
-                currentSlide = index;
-              }
-              
-              // Перейти к следующему слайду
-              function nextSlide() {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
-                resetAutoplay();
-              }
-              
-              // Перейти к предыдущему слайду
-              function prevSlide() {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(currentSlide);
-                resetAutoplay();
-              }
-              
-              // Перейти к конкретному слайду (по клику на точку)
-              function goToSlide(index) {
-                showSlide(index);
-                resetAutoplay();
-              }
-              
-              // Запустить автоматическое переключение слайдов
-              function startAutoplay() {
-                autoplayInterval = setInterval(nextSlide, 5000);
-              }
-              
-              // Сбросить таймер автоматического переключения
-              function resetAutoplay() {
-                clearInterval(autoplayInterval);
-                startAutoplay();
-              }
-              
-              // Инициализация карусели при загрузке страницы
-              document.addEventListener('DOMContentLoaded', initCarousel);
-            </script>
-
-            <!-- CATEGORIES SECTION-->
-            <section class="pt-5">
-              <header class="text-center">
-                <p class="small text-muted small text-uppercase mb-1">Лучшие коллекции</p>
-                <h2 class="h5 text-uppercase mb-4">Все категории</h2>
-              </header>
-              <div class="row">
-              {% if categories %}
-                {% for category in categories %}
-
-                  <div class="col-md-4 mb-4 mb-md-0">
-                    <a class="category-item" href="{% url 'store:category-products' category.slug %}">
-                      {% if category.category_image %}
-                        <img class="img-fluid" src="{{ category.category_image.url }}" alt="{{ category.title }}">
-                        {% else %}
-                        <img class="img-fluid" src="{% static 'img/cat-img-1.jpg' %}" alt="{{ category.title }}">
-                      {% endif %}
-                      <strong class="category-item-title">{{ category.title }}</strong>
-                    </a>
-                  </div>
-                
-                {% endfor %}
-              {% endif %}
-              </div>
-            </section>
-
-            <!-- TRENDING PRODUCTS-->
-            <section class="py-5">
-              <header>
-                <p class="small text-muted small text-uppercase mb-1">Сделано с любовью</p>
-                <h2 class="h5 text-uppercase mb-4">Популярные изделия</h2>
-              </header>
-              <div class="row">
-
-                {% if products %}
-                  {% for product in products %}
-                  
-                    <!-- PRODUCT-->
-                    <div class="col-xl-3 col-lg-4 col-sm-6">
-                      <div class="product text-center">
-                        <div class="position-relative mb-3">
-                          <div class="badge text-white badge-"></div>
-                          <a class="d-block" href="{% url 'store:product-detail' product.slug %}">
-                            {% if product.product_image %}
-                              <img class="img-fluid w-100" src="{{product.product_image.url}}" alt="{{product.title}}">
-                            {% else %}
-                              <img class="img-fluid w-100" src="{% static 'img/product-1.jpg' %}" alt="{{product.title}}">
-                            {% endif %}
-                          </a>
-                          <div class="product-overlay">
-                            <ul class="mb-0 list-inline">
-                              <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark" href="#"><i class="far fa-heart"></i></a></li>
-                              <li class="list-inline-item m-0 p-0">
-                                <form action="{% url 'store:add-to-cart' %}">
-                                  <input type="hidden" name="prod_id" value="{{product.id}}" id="product_id">
-                                  <button type="submit" class="btn-cart btn-sm">
-                                    <i class="fas fa-shopping-cart"></i>В корзину
-                                  </button>
-                                </form>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        <h6> <a class="reset-anchor" href="{% url 'store:product-detail' product.slug %}">{{product.title}}</a></h6>
-                        <p class="small text-muted">₸{{product.price}}</p>
-                      </div>
-                    </div>
-
-                  {% endfor %}
-                {% endif %}
-
-              </div>
-            </section>
-
-            <!-- SERVICES-->
-            <section class="py-5 bg-light">
-              <div class="container">
-                <div class="row text-center">
-                  <div class="col-lg-4 mb-3 mb-lg-0">
-                    <div class="d-inline-block">
-                      <div class="media align-items-end">
-                        <svg class="svg-icon svg-icon-big svg-icon-light">
-                          <use xlink:href="#delivery-time-1"> </use>
-                        </svg>
-                        <div class="media-body text-left ml-3">
-                          <h6 class="text-uppercase mb-1">Бесплатная доставка</h6>
-                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 mb-3 mb-lg-0">
-                    <div class="d-inline-block">
-                      <div class="media align-items-end">
-                        <svg class="svg-icon svg-icon-big svg-icon-light">
-                          <use xlink:href="#helpline-24h-1"> </use>
-                        </svg>
-                        <div class="media-body text-left ml-3">
-                          <h6 class="text-uppercase mb-1">Служба поддержки 24/7</h6>
-                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="d-inline-block">
-                      <div class="media align-items-end">
-                        <svg class="svg-icon svg-icon-big svg-icon-light">
-                          <use xlink:href="#label-tag-1"> </use>
-                        </svg>
-                        <div class="media-body text-left ml-3">
-                          <h6 class="text-uppercase mb-1">Праздничные предложения</h6>
-                          <p class="text-small mb-0 text-muted">Бесплатная доставка по всему Казахстану</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-secondary mr-2"></i>
+                    <p class="font-medium">14 дней возврата денег</p>
                 </div>
-              </div>
-            </section>
-
-            <!-- NEWSLETTER-->
-            <section class="py-5">
-              <div class="container p-0">
-                <div class="row">
-                  <div class="col-lg-6 mb-3 mb-lg-0">
-                    <h5 class="text-uppercase">Рассылка лучших предложении --------></h5>
-                    <p class="text-small text-muted mb-0">Не теряйте время!</p>
-                  </div>
-                  <div class="col-lg-6">
-                    <form action="#">
-                      <div class="input-group flex-column flex-sm-row mb-3">
-                        <input class="form-control form-control-lg py-3" type="email" placeholder="Введите ваш email" aria-describedby="button-addon2">
-                        <div class="input-group-append">
-                          <button class="btn btn-dark btn-block" id="button-addon2" type="submit">Подписаться</button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
+            </div>
+            
+            <a href="{% url 'store:all-categories' %}" class="inline-block px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition">Смотреть коллекцию</a>
         </div>
-      </div>
-      {% endblock content %}
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-10 text-center">Популярные категории</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for category in categories %}
+            <a href="{% url 'store:category-products' category.slug %}" class="group">
+                <div class="relative overflow-hidden rounded-lg bg-gray-100 aspect-square">
+                    {% if category.category_image %}
+                    <img src="{{ category.category_image.url }}" alt="{{ category.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                        <span class="text-gray-400 text-2xl">Нет изображения</span>
+                    </div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-black bg-opacity-20 flex items-end">
+                        <div class="w-full p-4 bg-white bg-opacity-90">
+                            <h3 class="text-lg font-semibold">{{ category.title }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-10 text-center">Популярные товары</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+            <div class="product-card bg-white rounded-lg overflow-hidden shadow">
+                <a href="{% url 'store:product-detail' product.slug %}">
+                    <div class="aspect-square overflow-hidden">
+                        {% if product.product_image %}
+                        <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                            <span class="text-gray-400">Нет изображения</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-medium mb-2 line-clamp-2">{{ product.title }}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold">{{ product.price }} ₸</span>
+                            <form method="post" action="{% url 'store:add-to-cart' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <button type="submit" class="p-2 rounded-full bg-gray-100 hover:bg-secondary hover:text-white transition">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-10">
+            <a href="{% url 'store:all-categories' %}" class="inline-block px-6 py-3 border border-black text-black font-medium hover:bg-black hover:text-white transition rounded-md">Смотреть все товары</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center">Почему мы?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-undo-alt text-2xl text-secondary"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">14 дней на возврат</h3>
+                <p class="text-gray-600">Мы гарантируем качество наших товаров. Если вы получили поврежденный товар, вы можете воспользоваться нашей 14-дневной гарантией возврата денег.</p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-gem text-2xl text-secondary"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Качество Jewelisque</h3>
+                <p class="text-gray-600">Наши изделия тщательно изготовлены, чтобы обеспечить вам обещание долговечного качества и сверкающего блеска на долгие годы.</p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="text-center p-6">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-truck text-2xl text-secondary"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Быстрая доставка</h3>
+                <p class="text-gray-600">Мы гордимся быстрым и эффективным обслуживанием. После размещения заказа мы обеспечиваем доставку в течение 1-3 рабочих дней.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center">Часто задаваемые вопросы</h2>
+        
+        <div class="max-w-3xl mx-auto space-y-6">
+            <!-- FAQ Item 1 -->
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 focus:outline-none" onclick="toggleFAQ(this)">
+                    <h3 class="text-lg font-medium text-left">Сколько стоит доставка?</h3>
+                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                </button>
+                <div class="max-h-0 overflow-hidden transition-all duration-300">
+                    <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <p class="text-gray-600"><strong>Казахстан:</strong> Бесплатно</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 2 -->
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 focus:outline-none" onclick="toggleFAQ(this)">
+                    <h3 class="text-lg font-medium text-left">Сколько времени занимает доставка?</h3>
+                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                </button>
+                <div class="max-h-0 overflow-hidden transition-all duration-300">
+                    <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <p class="text-gray-600"><strong>Казахстан:</strong> Обычно в течение 2 дней и не более 3 дней</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 focus:outline-none" onclick="toggleFAQ(this)">
+                    <h3 class="text-lg font-medium text-left">Исчезает ли цвет при использовании?</h3>
+                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                </button>
+                <div class="max-h-0 overflow-hidden transition-all duration-300">
+                    <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <p class="text-gray-600">Нет, все наши украшения сделаны из нержавеющей стали и покрыты 3 слоями 18-каратного золота, они устойчивы к потускнению, водостойкие и сохраняют тот же цвет в течение многих лет.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 4 -->
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button class="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50 focus:outline-none" onclick="toggleFAQ(this)">
+                    <h3 class="text-lg font-medium text-left">Могу ли я вернуть заказ, если он мне не понравился?</h3>
+                    <i class="fas fa-chevron-down transform transition-transform"></i>
+                </button>
+                <div class="max-h-0 overflow-hidden transition-all duration-300">
+                    <div class="p-4 bg-gray-50 border-t border-gray-200">
+                        <p class="text-gray-600">Да, если по какой-либо причине вы не удовлетворены полученным заказом, вы можете связаться с нами в течение 14 дней, чтобы вернуть и получить возмещение за ваш заказ.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="py-16 bg-gray-900 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Подпишитесь на наши новости</h2>
+        <p class="text-gray-300 mb-8 max-w-2xl mx-auto">Будьте в курсе последних поступлений, эксклюзивных предложений и специальных скидок.</p>
+        
+        <form action="{% url 'store:subscription' %}" method="post" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Ваш email" required class="flex-grow px-4 py-3 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-secondary">
+            <button type="submit" class="px-6 py-3 bg-secondary rounded-md font-medium hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-secondary">Подписаться</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // FAQ toggle
+    function toggleFAQ(el) {
+        const content = el.nextElementSibling;
+        const icon = el.querySelector('i');
+        
+        if(content.style.maxHeight) {
+            content.style.maxHeight = null;
+            icon.classList.remove('rotate-180');
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+            icon.classList.add('rotate-180');
+        }
+    }
+    
+    // Carousel auto slide
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentSlide = 0;
+        let isChanging = false;
+        
+        function nextSlide() {
+            if (isChanging) return;
+            isChanging = true;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+            
+            // Разрешаем следующий переход только после завершения текущего
+            setTimeout(() => {
+                isChanging = false;
+            }, 3000); // Совпадает со временем transition в CSS
+        }
+        
+        // Change slide every 7 seconds
+        setInterval(nextSlide, 7000);
+    });
+</script>
+{% endblock %} 

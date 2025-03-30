@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Удалить отзыв | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:my-reviews' %}" class="text-gray-500 hover:text-secondary">Мои отзывы</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Удалить отзыв</span>
+    </div>
+    
+    <div class="max-w-lg mx-auto">
+        <div class="bg-white rounded-lg shadow p-8 text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-2xl"></i>
+            </div>
+            
+            <h1 class="text-2xl font-bold mb-4">Удаление отзыва</h1>
+            <p class="text-gray-600 mb-8">Вы уверены, что хотите удалить свой отзыв о товаре "{{ review.product.title }}"?</p>
+            
+            <div class="p-6 bg-gray-50 rounded-lg mb-8">
+                <div class="flex">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star text-yellow-400"></i>
+                        {% else %}
+                            <i class="far fa-star text-yellow-400"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="text-left mt-4">{{ review.comment }}</p>
+                <p class="text-sm text-gray-500 mt-2 text-left">Дата: {{ review.created_at|date:"d.m.Y" }}</p>
+            </div>
+            
+            <form method="post" class="flex flex-col md:flex-row justify-center gap-4">
+                {% csrf_token %}
+                <a href="{% url 'store:my-reviews' %}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+                    Отмена
+                </a>
+                <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                    Удалить отзыв
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

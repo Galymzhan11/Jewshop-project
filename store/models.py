@@ -69,12 +69,24 @@ class Cart(models.Model):
 
 
 STATUS_CHOICES = (
-    ('Pending', 'В обработке'),
+    ('Pending', 'В ожидании'),
     ('Accepted', 'Принят'),
-    ('Packed', 'Упакован'),
     ('On The Way', 'В пути'),
     ('Delivered', 'Доставлен'),
     ('Cancelled', 'Отменен')
+)
+
+# Добавляем варианты способов оплаты
+PAYMENT_METHOD_CHOICES = (
+    ('cash', 'Наличными при получении'),
+    ('card', 'Оплата картой'),
+)
+
+# Добавляем варианты статусов оплаты
+PAYMENT_STATUS_CHOICES = (
+    ('pending', 'Ожидает оплаты'),
+    ('paid', 'Оплачено'),
+    ('failed', 'Ошибка оплаты'),
 )
 
 class Order(models.Model):
@@ -88,4 +100,47 @@ class Order(models.Model):
         max_length=50,
         default="Pending",
         verbose_name="Статус"
-        )
+    )
+    payment_method = models.CharField(
+        choices=PAYMENT_METHOD_CHOICES,
+        max_length=20,
+        default="cash",
+        verbose_name="Способ оплаты"
+    )
+    payment_status = models.CharField(
+        choices=PAYMENT_STATUS_CHOICES,
+        max_length=20,
+        default="pending",
+        verbose_name="Статус оплаты"
+    )
+    # Можно добавить номер заказа для идентификации транзакции
+    order_number = models.CharField(max_length=20, blank=True, null=True, verbose_name="Номер заказа")
+
+
+# Варианты оценок для отзывов
+RATING_CHOICES = (
+    (1, '1 звезда'),
+    (2, '2 звезды'),
+    (3, '3 звезды'),
+    (4, '4 звезды'),
+    (5, '5 звезд'),
+)
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews", verbose_name="Товар")
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Заказ")
+    rating = models.IntegerField(choices=RATING_CHOICES, verbose_name="Оценка")
+    comment = models.TextField(verbose_name="Комментарий")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    is_published = models.BooleanField(default=True, verbose_name="Опубликован")
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        ordering = ['-created_at']
+        # Пользователь может оставить только один отзыв на товар из одного заказа
+        unique_together = ['user', 'product', 'order']
+
+    def __str__(self):
+        return f"Отзыв от {self.user.username} на {self.product.title}"

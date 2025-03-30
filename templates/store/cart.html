@@ -1,187 +1,140 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load humanize %}
+
+{% block title %}Корзина | Jewelisque{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <!-- HERO SECTION-->
-    <section class="py-5 bg-light">
-      <div class="container">
-        <div class="row px-4 px-lg-5 py-lg-4 align-items-center">
-          <div class="col-lg-6">
-            <h1 class="h2 text-uppercase mb-0">Корзина</h1>
-          </div>
-          <div class="col-lg-6 text-lg-right">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb justify-content-lg-end mb-0 px-0">
-                <li class="breadcrumb-item"><a href="index.html">Главная</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Корзина</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </section>
-
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Корзина</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">Ваша корзина</h1>
+    
     {% if cart_products %}
-    <section class="py-5">
-      <h2 class="h5 text-uppercase mb-4">Корзина покупок</h2>
-
-      {% include 'partials/_messages.html' %}
-
-      <div class="row">
-        <div class="col-lg-8 mb-4 mb-lg-0">
-          <!-- CART TABLE-->
-          <div class="table-responsive mb-4">
-            <table class="table">
-              <thead class="bg-light">
-                <tr>
-                  <th class="border-0" scope="col"> <strong class="text-small text-uppercase">Продукт</strong></th>
-                  <th class="border-0" scope="col"> <strong class="text-small text-uppercase">Цена</strong></th>
-                  <th class="border-0" scope="col"> <strong class="text-small text-uppercase">Количество</strong></th>
-                  <th class="border-0" scope="col"> <strong class="text-small text-uppercase">Итого</strong></th>
-                  <th class="border-0" scope="col"> </th>
-                </tr>
-              </thead>
-              <tbody>
-
-                {% for cart_product in cart_products %}
-                <tr>
-                  <th class="pl-0 border-0" scope="row">
-                    <div class="media align-items-center">
-
-                      {% if cart_product.product.product_image %}
-                        <a class="reset-anchor d-block animsition-link" href="{% url 'store:product-detail' cart_product.product.slug %}"><img src="{{cart_product.product.product_image.url}}" alt="{{cart_product.product.title}}" width="70"/></a>
-                      {% else %}
-                        <a class="reset-anchor d-block animsition-link" href="{% url 'store:product-detail' cart_product.product.slug %}"><img src="{% static 'img/product-detail-3.jpg' %}" alt="{{cart_product.product.title}}" width="70"/></a>
-                      {% endif %}
-
-                      <div class="media-body ml-3"><strong class="h6"><a class="reset-anchor animsition-link" href="{% url 'store:product-detail' cart_product.product.slug %}">{{cart_product.product.title}}</a></strong></div>
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Cart Items -->
+        <div class="lg:w-2/3">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="hidden md:flex border-b py-4 px-6 bg-gray-50 text-gray-600 font-medium">
+                    <div class="w-full md:w-2/5">Товар</div>
+                    <div class="w-1/5 text-center">Цена</div>
+                    <div class="w-1/5 text-center">Количество</div>
+                    <div class="w-1/5 text-center">Итого</div>
+                </div>
+                
+                <!-- Cart Items -->
+                {% for cart_item in cart_products %}
+                <div class="flex flex-col md:flex-row items-center py-6 px-4 md:px-6 border-b {% if forloop.last %}border-b-0{% endif %}">
+                    <!-- Product -->
+                    <div class="w-full md:w-2/5 flex items-center mb-4 md:mb-0">
+                        <div class="w-20 h-20 mr-4 overflow-hidden rounded-md flex-shrink-0">
+                            {% if cart_item.product.product_image %}
+                            <img src="{{ cart_item.product.product_image.url }}" alt="{{ cart_item.product.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                                <i class="fas fa-image text-gray-400"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium">{{ cart_item.product.title }}</h3>
+                            <a href="{% url 'store:remove-cart' cart_item.id %}" class="text-red-500 text-sm hover:underline flex items-center mt-1">
+                                <i class="fas fa-trash-alt mr-1"></i> Удалить
+                            </a>
+                        </div>
                     </div>
-                  </th>
-                  <td class="align-middle border-0">
-                    <p class="mb-0 small">₸{{cart_product.product.price}}</p>
-                  </td>
-                  <td class="align-middle border-0">
-                    <div class="border d-flex align-items-center justify-content-between px-3"><span class="small text-uppercase text-gray headings-font-family">Количество</span>
-                      <div class="quantity">
-                        <a href="{% url 'store:minus-cart' cart_product.id %}" class="dec-btn p-0 ml-2"><i class="fas fa-minus"></i></a>
-                        <input class="form-control form-control-sm border-0 shadow-0 p-0" type="text" value="{{cart_product.quantity}}"/>
-                        <a href="{% url 'store:plus-cart' cart_product.id %}" class="inc-btn p-0"><i class="fas fa-plus"></i></a>
-                      </div>
+                    
+                    <!-- Price -->
+                    <div class="w-full md:w-1/5 text-center mb-4 md:mb-0">
+                        <span class="md:hidden font-medium mr-2">Цена:</span>
+                        <span>{{ cart_item.product.price }} ₸</span>
                     </div>
-                  </td>
-                  <td class="align-middle border-0">
-                    <p class="mb-0 small">₸{{cart_product.total_price|intcomma}}</p>
-                  </td>
-                  <td class="align-middle border-0"><a class="reset-anchor" href="{% url 'store:remove-cart' cart_product.id %}"><i class="fas fa-trash-alt small text-muted"></i></a></td>
-                </tr>
+                    
+                    <!-- Quantity -->
+                    <div class="w-full md:w-1/5 text-center mb-4 md:mb-0">
+                        <div class="inline-flex items-center border border-gray-300 rounded-md">
+                            <a href="{% url 'store:minus-cart' cart_item.id %}" class="w-8 h-8 flex items-center justify-center border-r border-gray-300 cursor-pointer hover:bg-gray-100">
+                                <i class="fas fa-minus text-sm"></i>
+                            </a>
+                            <span class="w-10 h-8 flex items-center justify-center text-center">{{ cart_item.quantity }}</span>
+                            <a href="{% url 'store:plus-cart' cart_item.id %}" class="w-8 h-8 flex items-center justify-center border-l border-gray-300 cursor-pointer hover:bg-gray-100">
+                                <i class="fas fa-plus text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="w-full md:w-1/5 text-center font-medium">
+                        <span class="md:hidden mr-2">Итого:</span>
+                        <span>{{ cart_item.total_price }} ₸</span>
+                    </div>
+                </div>
                 {% endfor %}
-
-              </tbody>
-            </table>
-          </div>
-          <!-- CART NAV-->
-          <div class="bg-light px-4 py-3">
-            <div class="row align-items-center text-center">
-              <div class="col-md-6 mb-3 mb-md-0 text-md-left"><a class="btn btn-link p-0 text-dark btn-sm" href="{% url 'store:home' %}"><i class="fas fa-long-arrow-alt-left mr-2"> </i>Продолжить покупки</a></div>
-              <div class="col-md-6 text-md-right"><a class="btn btn-outline-dark btn-sm" href="checkout.html">Перейти к оформлению<i class="fas fa-long-arrow-alt-right ml-2"></i></a></div>
             </div>
-          </div>
         </div>
-        <!-- ORDER TOTAL-->
-        <div class="col-lg-4">
-          <div class="card border-0 rounded-0 p-lg-4 bg-light">
-            <div class="card-body">
-              <h5 class="text-uppercase mb-4">Итого в корзине</h5>
-              <ul class="list-unstyled mb-0">
-                <li class="d-flex align-items-center justify-content-between"><strong class="text-uppercase small font-weight-bold">Промежуточный итог</strong><span class="text-muted small">₸{{amount|intcomma}}</span></li>
-                <li class="d-flex align-items-center justify-content-between"><strong class="text-uppercase small font-weight-bold">Стоимость доставки</strong><span class="text-muted small">+ ₸{{shipping_amount}}</span></li>
-                <li class="border-bottom my-2"></li>
-                <li class="d-flex align-items-center justify-content-between mb-4"><strong class="text-uppercase small font-weight-bold">Итого</strong><span>₸{{total_amount|intcomma}}</span></li>
-                <li>
-
-                  {% comment %} <form action="#">
-                    <div class="form-group mb-0">
-                      <input class="form-control" type="text" placeholder="Введите ваш купон">
-                      <button class="btn btn-dark btn-sm btn-block" type="submit"> <i class="fas fa-gift mr-2"></i>Применить купон</button>
-                    </div>
-                  </form> {% endcomment %}
-
-                </li>
-              </ul>
-
-
-              <h5 class="text-uppercase my-5">Выберите адрес доставки</h5>
-
-              <form action="{% url 'store:checkout' %}" id="myform">
-
-                {% if addresses %}
-                  {% for address in addresses %}
-                    <div class="mb-3">
-                    <input type="radio" name="address" value="{{address.id}}"> <strong>Адрес {{forloop.counter}}</strong> <br>
-                    ( {{address.locality}}, {{address.city}}, {{address.state}} )
-                    </div>
-                  {% endfor %}
-                {% endif %}
-
-                <!-- Set up a container element for the button -->
-                <div class="text-end" id="paypal-button-container"></div>
-
-                {% comment %} For Cash on Delivery {% endcomment %}
-                <button type="submit" class="btn btn-dark btn-lg btn-outline-dark" type="submit"> <i class="fas fa-dollar-sign mr-2"></i>Наложенный платеж</button>
-
-              </form>
-
+        
+        <!-- Cart Summary -->
+        <div class="lg:w-1/3">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold mb-6">Сумма заказа</h2>
+                
+                <div class="flex justify-between pb-4 mb-4 border-b border-gray-200">
+                    <span class="text-gray-600">Подытог</span>
+                    <span class="font-medium">{{ amount }} ₸</span>
+                </div>
+                
+                <div class="flex justify-between pb-4 mb-4 border-b border-gray-200">
+                    <span class="text-gray-600">Доставка</span>
+                    <span class="font-medium text-green-600">Бесплатно</span>
+                </div>
+                
+                <div class="flex justify-between mb-6">
+                    <span class="text-lg font-bold">Итого</span>
+                    <span class="text-lg font-bold">{{ amount }} ₸</span>
+                </div>
+                
+                <a href="{% url 'store:checkout' %}" class="w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition flex items-center justify-center">
+                    Оформить заказ
+                </a>
+                
+                <div class="mt-6 text-center">
+                    <a href="{% url 'store:all-categories' %}" class="text-gray-600 hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Продолжить покупки
+                    </a>
+                </div>
             </div>
-          </div>
+            
+            <!-- Shipping Info -->
+            <div class="mt-6 bg-gray-50 rounded-lg p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-truck text-secondary mr-3"></i>
+                    <span class="font-medium">Бесплатная доставка</span>
+                </div>
+                <p class="text-gray-600 text-sm">Бесплатная доставка по всему Казахстану при любой сумме заказа.</p>
+            </div>
+            
+            <!-- Secure Payment -->
+            <div class="mt-4 bg-gray-50 rounded-lg p-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-lock text-secondary mr-3"></i>
+                    <span class="font-medium">Безопасная оплата</span>
+                </div>
+                <p class="text-gray-600 text-sm">Мы принимаем все основные кредитные карты и обеспечиваем безопасность ваших платежей.</p>
+            </div>
         </div>
-
-      </div>
-    </section>
-
+    </div>
     {% else %}
-
-      <div class="text-center py-5">
-        <h3 class="mb-3">Ваша корзина пуста.</h3>
-        <a href="{% url 'store:home' %}"><i class="fas fa-long-arrow-alt-left mr-2"> </i>Продолжить покупки</a>
-      </div>
-
+    <div class="text-center py-16">
+        <div class="mb-6 text-gray-400">
+            <i class="fas fa-shopping-cart text-6xl"></i>
+        </div>
+        <h2 class="text-2xl font-semibold mb-4">Ваша корзина пуста</h2>
+        <p class="text-gray-600 mb-8">Похоже, вы еще не добавили товары в корзину</p>
+        <a href="{% url 'store:all-categories' %}" class="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition">Начать покупки</a>
+    </div>
     {% endif %}
-
-  </div>
-{% endblock content %}
-
-{% block payment-gateway %}
-  <!-- Include the PayPal JavaScript SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=YOUR-PAYPAL-CLIENT-ID&currency=USD"></script>
-
-<script>
-    // Render the PayPal button into #paypal-button-container
-    paypal.Buttons({
-
-        // Set up the transaction
-        createOrder: function(data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: '{{total_amount}}'
-                    }
-                }]
-            });
-        },
-
-        // Finalize the transaction
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                // Show a success message to the buyer
-                alert('Транзакция завершена, ' + details.payer.name.given_name + '!');
-                // Save the order in the database after successful payment
-                document.getElementById('myform').submit();
-            });
-        }
-
-
-    }).render('#paypal-button-container');
-</script>
-{% endblock payment-gateway %}
+</div>
+{% endblock %} 

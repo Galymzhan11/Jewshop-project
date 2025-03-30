@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Добавить отзыв | Jewelisque{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Совершенно новая система рейтинга звезд */
+    .star-rating {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .star-rating input {
+        display: none;
+    }
+    
+    .star-rating label {
+        color: #d1d5db;
+        font-size: 1.5rem;
+        padding: 0 0.1rem;
+        cursor: pointer;
+    }
+    
+    /* Базовый стиль - все звезды серые */
+    .star-rating label i {
+        transition: color 0.2s;
+    }
+    
+    /* При наведении на звезду, она и все предыдущие становятся желтыми */
+    .star-rating input:nth-of-type(1):hover ~ label:nth-of-type(1) i,
+    .star-rating input:nth-of-type(2):hover ~ label:nth-of-type(-n+2) i,
+    .star-rating input:nth-of-type(3):hover ~ label:nth-of-type(-n+3) i,
+    .star-rating input:nth-of-type(4):hover ~ label:nth-of-type(-n+4) i,
+    .star-rating input:nth-of-type(5):hover ~ label:nth-of-type(-n+5) i {
+        color: #fbbf24;
+    }
+    
+    /* При выборе звезды, она и все предыдущие остаются желтыми */
+    .star-rating input:nth-of-type(1):checked ~ label:nth-of-type(1) i,
+    .star-rating input:nth-of-type(2):checked ~ label:nth-of-type(-n+2) i,
+    .star-rating input:nth-of-type(3):checked ~ label:nth-of-type(-n+3) i,
+    .star-rating input:nth-of-type(4):checked ~ label:nth-of-type(-n+4) i,
+    .star-rating input:nth-of-type(5):checked ~ label:nth-of-type(-n+5) i {
+        color: #fbbf24;
+    }
+
+    /* При наведении на уже выбранные звезды */
+    .star-rating label:hover i {
+        color: #fbbf24;
+    }
+    .star-rating label:hover ~ label i {
+        color: #d1d5db !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:my-purchased-products' %}" class="text-gray-500 hover:text-secondary">Мои покупки</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Добавить отзыв</span>
+    </div>
+    
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded-lg shadow p-8">
+            <h1 class="text-2xl font-bold mb-6">Добавить отзыв</h1>
+            
+            <!-- Product Info -->
+            <div class="flex items-start mb-8 p-4 bg-gray-50 rounded-lg">
+                <div class="w-24 h-24 rounded-md overflow-hidden mr-4 flex-shrink-0">
+                    {% if product.product_image %}
+                    <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                        <i class="fas fa-image text-2xl"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-xl font-medium">{{ product.title }}</h2>
+                    <p class="text-gray-600 mt-1">{{ product.short_description|truncatechars:100 }}</p>
+                    <p class="text-gray-600 mt-1">Заказ от: {{ order.ordered_date|date:"d.m.Y" }}</p>
+                </div>
+            </div>
+            
+            <!-- Review Form -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="p-3 bg-red-50 text-red-600 rounded-md">
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Rating Stars -->
+                <div>
+                    <label class="block mb-3 font-medium">{{ form.rating.label }}</label>
+                    <div class="star-rating flex items-center mb-2">
+                        {% for radio in form.rating %}
+                        <input type="radio" id="{{ radio.id_for_label }}" name="rating" value="{{ radio.data.value }}" class="star-input" {% if radio.data.selected %}checked{% endif %}>
+                        {% endfor %}
+                        
+                        <label for="id_rating_0" class="star-label"><i class="fas fa-star"></i></label>
+                        <label for="id_rating_1" class="star-label"><i class="fas fa-star"></i></label>
+                        <label for="id_rating_2" class="star-label"><i class="fas fa-star"></i></label>
+                        <label for="id_rating_3" class="star-label"><i class="fas fa-star"></i></label>
+                        <label for="id_rating_4" class="star-label"><i class="fas fa-star"></i></label>
+                    </div>
+                    <div class="text-gray-500 text-sm">Выберите рейтинг от 1 до 5 звезд</div>
+                    {% if form.rating.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.rating.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Comment -->
+                <div>
+                    <label for="{{ form.comment.id_for_label }}" class="block mb-2 font-medium">{{ form.comment.label }}</label>
+                    {{ form.comment }}
+                    {% if form.comment.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.comment.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex justify-between mt-8">
+                    <a href="{% url 'store:my-purchased-products' %}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+                        Отмена
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+                        Опубликовать отзыв
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

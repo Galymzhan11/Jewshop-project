@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Оплата заказа {{ order_number }} | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:orders' %}" class="text-gray-500 hover:text-secondary">Заказы</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Оплата заказа</span>
+    </div>
+    
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Payment Header -->
+            <div class="bg-gray-800 text-white p-6">
+                <h1 class="text-2xl font-bold">Оплата заказа #{{ order_number }}</h1>
+                <p class="mt-2">Сумма к оплате: <span class="font-bold">{{ total_amount }} ₸</span></p>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="p-6 border-b">
+                <h2 class="text-lg font-bold mb-4">Информация о заказе</h2>
+                
+                <div class="space-y-4">
+                    {% for order in orders %}
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
+                            {% if order.product.product_image %}
+                            <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center">
+                                <i class="fas fa-image text-gray-400"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-medium">{{ order.product.title }}</h3>
+                            <div class="flex justify-between text-gray-600 text-sm">
+                                <span>{{ order.quantity }} x {{ order.product.price }} ₸</span>
+                                <span>{{ order.product.price|floatformat:2|mul:order.quantity }} ₸</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Credit Card Form -->
+            <div class="p-6">
+                <h2 class="text-lg font-bold mb-4">Данные банковской карты</h2>
+                
+                <form id="payment-form" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label for="card_number" class="block text-gray-700 mb-1">Номер карты</label>
+                        <input type="text" id="card_number" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="1234 5678 9012 3456" maxlength="19">
+                        <p class="text-xs text-gray-500 mt-1">Для тестирования введите любые 16 цифр</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="expiry" class="block text-gray-700 mb-1">Срок действия</label>
+                            <input type="text" id="expiry" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-gray-700 mb-1">CVV</label>
+                            <input type="text" id="cvv" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="123" maxlength="3">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="cardholder" class="block text-gray-700 mb-1">Имя держателя карты</label>
+                        <input type="text" id="cardholder" class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="IVAN IVANOV">
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" id="submit-payment" class="w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition">
+                            Оплатить {{ total_amount }} ₸
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center text-sm text-gray-500 flex items-center justify-center">
+                    <i class="fas fa-lock mr-2"></i>
+                    <span>Тестовая оплата, реальные деньги не будут списаны</span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="p-6 bg-gray-50">
+                <a href="{% url 'store:orders' %}" class="inline-flex items-center text-gray-700 hover:text-secondary">
+                    <i class="fas fa-arrow-left mr-2"></i> 
+                    Вернуться к заказам
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment processing overlay -->
+<div id="payment-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+        <h3 class="text-xl font-bold mb-2">Обработка платежа</h3>
+        <p class="text-gray-600">Пожалуйста, не закрывайте эту страницу...</p>
+    </div>
+</div>
+
+<!-- Payment success overlay -->
+<div id="success-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
+        <div class="mb-4 text-green-500">
+            <i class="fas fa-check-circle text-5xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Оплата прошла успешно!</h3>
+        <p class="text-gray-600 mb-6">Ваш заказ был успешно оплачен</p>
+        <a href="" id="redirect-link" class="px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+            Продолжить
+        </a>
+    </div>
+</div>
+
+<!-- Payment error overlay -->
+<div id="error-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full text-center">
+        <div class="mb-4 text-red-500">
+            <i class="fas fa-exclamation-circle text-5xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Ошибка оплаты</h3>
+        <p id="error-message" class="text-gray-600 mb-6">Произошла ошибка при обработке платежа</p>
+        <button id="try-again" class="px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+            Попробовать снова
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('payment-form');
+    const paymentOverlay = document.getElementById('payment-overlay');
+    const successOverlay = document.getElementById('success-overlay');
+    const errorOverlay = document.getElementById('error-overlay');
+    const errorMessage = document.getElementById('error-message');
+    const redirectLink = document.getElementById('redirect-link');
+    const tryAgainButton = document.getElementById('try-again');
+    
+    // Форматирование номера карты (добавляет пробелы после каждых 4 цифр)
+    const cardNumberInput = document.getElementById('card_number');
+    cardNumberInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 16);
+        let formattedValue = '';
+        
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += ' ';
+            }
+            formattedValue += value[i];
+        }
+        
+        e.target.value = formattedValue;
+    });
+    
+    // Форматирование срока действия (добавляет / после 2 цифр)
+    const expiryInput = document.getElementById('expiry');
+    expiryInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        
+        if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2);
+        }
+        
+        e.target.value = value;
+    });
+    
+    // Ограничение CVV только цифрами
+    const cvvInput = document.getElementById('cvv');
+    cvvInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
+    });
+    
+    // Преобразование имени в верхний регистр
+    const cardholderInput = document.getElementById('cardholder');
+    cardholderInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+    
+    // Обработка отправки формы
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Простая валидация
+        const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+        const expiry = expiryInput.value;
+        const cvv = cvvInput.value;
+        const cardholder = cardholderInput.value;
+        
+        // Проверяем заполнение полей
+        if (!cardNumber || cardNumber.length !== 16) {
+            showError("Пожалуйста, введите корректный номер карты (16 цифр)");
+            return;
+        }
+        
+        if (!expiry || expiry.length !== 5) {
+            showError("Пожалуйста, введите корректный срок действия карты (ММ/ГГ)");
+            return;
+        }
+        
+        if (!cvv || cvv.length !== 3) {
+            showError("Пожалуйста, введите корректный CVV код (3 цифры)");
+            return;
+        }
+        
+        if (!cardholder) {
+            showError("Пожалуйста, введите имя держателя карты");
+            return;
+        }
+        
+        // Показываем оверлей обработки платежа
+        paymentOverlay.classList.remove('hidden');
+        
+        // Отправляем запрос на обработку платежа
+        const orderNumber = '{{ order_number }}';
+        const url = '/process-payment/' + orderNumber + '/';
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                card_number: cardNumber,
+                expiry: expiry,
+                cvv: cvv,
+                cardholder: cardholder
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Скрываем оверлей обработки
+            paymentOverlay.classList.add('hidden');
+            
+            if (data.status === 'success') {
+                // Показываем оверлей успешной оплаты
+                successOverlay.classList.remove('hidden');
+                redirectLink.href = data.redirect;
+            } else {
+                // Показываем оверлей с ошибкой
+                errorMessage.textContent = data.message || 'Произошла ошибка при обработке платежа';
+                errorOverlay.classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            // Скрываем оверлей обработки
+            paymentOverlay.classList.add('hidden');
+            
+            // Показываем оверлей с ошибкой
+            errorMessage.textContent = 'Произошла ошибка при отправке запроса';
+            errorOverlay.classList.remove('hidden');
+            console.error('Error:', error);
+        });
+    });
+    
+    // Обработка кнопки "Попробовать снова"
+    tryAgainButton.addEventListener('click', function() {
+        errorOverlay.classList.add('hidden');
+    });
+    
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorOverlay.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %} 

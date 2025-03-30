@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Управление заказами | Администратор | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Панель администратора</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Управление заказами</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">Управление заказами</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-6 bg-gray-50 border-b">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mr-4 text-white">
+                            <i class="fas fa-crown text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">{{ request.user.username }}</h2>
+                            <p class="text-gray-500">{{ request.user.email }}</p>
+                            <p class="text-xs bg-secondary text-white px-2 py-1 rounded mt-1 inline-block">Администратор</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'store:profile' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-tachometer-alt mr-2"></i> Панель управления
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:admin-orders' %}" class="block px-4 py-2 rounded-md bg-gray-100 font-medium">
+                                <i class="fas fa-shopping-bag mr-2"></i> Управление заказами
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:admin-reviews' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-star mr-2"></i> Управление отзывами
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/" target="_blank" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-cogs mr-2"></i> Админ-панель Django
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:password-change' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-lock mr-2"></i> Изменить пароль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:logout' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100 text-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Orders -->
+        <div class="md:col-span-3">
+            <!-- Filters -->
+            <div class="bg-white rounded-lg shadow p-4 mb-6">
+                <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                        <select name="status" id="status" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Все статусы</option>
+                            <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>В ожидании</option>
+                            <option value="Accepted" {% if status == 'Accepted' %}selected{% endif %}>Принят</option>
+                            <option value="On The Way" {% if status == 'On The Way' %}selected{% endif %}>В пути</option>
+                            <option value="Delivered" {% if status == 'Delivered' %}selected{% endif %}>Доставлен</option>
+                            <option value="Cancelled" {% if status == 'Cancelled' %}selected{% endif %}>Отменен</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-1">Статус оплаты</label>
+                        <select name="payment_status" id="payment_status" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Все статусы оплаты</option>
+                            <option value="pending" {% if payment_status == 'pending' %}selected{% endif %}>Ожидает оплаты</option>
+                            <option value="paid" {% if payment_status == 'paid' %}selected{% endif %}>Оплачено</option>
+                            <option value="failed" {% if payment_status == 'failed' %}selected{% endif %}>Ошибка оплаты</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="date_from" class="block text-sm font-medium text-gray-700 mb-1">Дата от</label>
+                        <input type="date" name="date_from" id="date_from" class="w-full border border-gray-300 rounded-md px-3 py-2" value="{{ date_from|date:'Y-m-d' }}">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="bg-secondary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition w-full">
+                            <i class="fas fa-filter mr-2"></i> Фильтровать
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow">
+                {% if orders %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-50 text-left text-gray-600">
+                                <th class="px-4 py-3 font-medium">Заказ №</th>
+                                <th class="px-4 py-3 font-medium">Товар</th>
+                                <th class="px-4 py-3 font-medium">Клиент</th>
+                                <th class="px-4 py-3 font-medium">Дата</th>
+                                <th class="px-4 py-3 font-medium">Статус</th>
+                                <th class="px-4 py-3 font-medium">Оплата</th>
+                                <th class="px-4 py-3 font-medium">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            {% for order in orders %}
+                            <tr>
+                                <td class="px-4 py-4 text-gray-600">
+                                    {{ order.order_number }}
+                                </td>
+                                <td class="px-4 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-12 h-12 rounded-md overflow-hidden mr-3">
+                                            {% if order.product.product_image %}
+                                            <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <a href="{% url 'store:product-detail' order.product.slug %}" class="font-medium hover:text-secondary">{{ order.product.title }}</a>
+                                            <p class="text-gray-500 text-sm">{{ order.quantity }} x {{ order.product.price }} ₸</p>
+                                            <p class="font-medium text-gray-800">Итого: {{ order.quantity|floatformat:0|mul:order.product.price|floatformat:0 }} ₸</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <div>
+                                        <p class="font-medium">{{ order.user.username }}</p>
+                                        <p class="text-gray-500 text-sm">{{ order.user.email }}</p>
+                                        <p class="text-gray-500 text-sm">{{ order.address.locality }}, {{ order.address.city }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4 text-gray-600">
+                                    {{ order.ordered_date|date:"d.m.Y" }}
+                                </td>
+                                <td class="px-4 py-4">
+                                    <form id="status-form-{{ order.id }}" method="post" action="{% url 'store:update-order-status' order.id %}">
+                                        {% csrf_token %}
+                                        <select name="status" class="border border-gray-300 rounded-md px-2 py-1 text-sm mb-1 w-full" onchange="document.getElementById('status-form-{{ order.id }}').submit()">
+                                            <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>В ожидании</option>
+                                            <option value="Accepted" {% if order.status == 'Accepted' %}selected{% endif %}>Принят</option>
+                                            <option value="On The Way" {% if order.status == 'On The Way' %}selected{% endif %}>В пути</option>
+                                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Доставлен</option>
+                                            <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Отменен</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <form id="payment-form-{{ order.id }}" method="post" action="{% url 'store:update-payment-status' order.id %}">
+                                        {% csrf_token %}
+                                        <select name="payment_status" class="border border-gray-300 rounded-md px-2 py-1 text-sm mb-1 w-full" onchange="document.getElementById('payment-form-{{ order.id }}').submit()">
+                                            <option value="pending" {% if order.payment_status == 'pending' %}selected{% endif %}>Ожидает оплаты</option>
+                                            <option value="paid" {% if order.payment_status == 'paid' %}selected{% endif %}>Оплачено</option>
+                                            <option value="failed" {% if order.payment_status == 'failed' %}selected{% endif %}>Ошибка оплаты</option>
+                                        </select>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            {{ order.get_payment_method_display }}
+                                        </p>
+                                    </form>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <div class="flex space-x-2">
+                                        <a href="#" onclick="showOrderDetails('{{ order.id }}')" class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="#" onclick="return confirm('Вы уверены, что хотите удалить этот заказ?')" class="text-red-600 hover:text-red-800">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <div class="mb-6 text-gray-400">
+                        <i class="fas fa-shopping-bag text-6xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-semibold mb-4">Нет заказов</h2>
+                    <p class="text-gray-600">По вашему запросу не найдено заказов</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно с деталями заказа (будет показываться по клику) -->
+<div id="orderDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full max-h-screen overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Детали заказа</h2>
+                <button onclick="hideOrderDetails()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="orderDetailsContent">
+                <!-- Здесь будут отображаться детали заказа через AJAX -->
+                <div class="animate-pulse">
+                    <div class="h-6 bg-gray-200 rounded mb-4 w-1/4"></div>
+                    <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded mb-2 w-5/6"></div>
+                    <div class="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
+                    
+                    <div class="h-6 bg-gray-200 rounded mb-4 w-1/3 mt-8"></div>
+                    <div class="h-20 bg-gray-200 rounded mb-4"></div>
+                    
+                    <div class="h-6 bg-gray-200 rounded mb-4 w-1/3 mt-8"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    function showOrderDetails(orderId) {
+        document.getElementById('orderDetailsModal').classList.remove('hidden');
+        // Здесь можно добавить AJAX запрос для получения деталей заказа
+        // Для примера просто показываем модальное окно
+    }
+    
+    function hideOrderDetails() {
+        document.getElementById('orderDetailsModal').classList.add('hidden');
+    }
+</script>
+{% endblock %}
+
+{% endblock %} 

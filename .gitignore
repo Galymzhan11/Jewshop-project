@@ -1,37 +1,51 @@
-# Конфиденциальные файлы
-.env
-.env.local
-.env.development
-.env.production
-config/secrets.yml
-config/database.yml
-
-# Папки с зависимостями
-node_modules/
-vendor/
-bower_components/
-
-# Временные файлы
-tmp/
-temp/
-.cache/
-dist/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Логи
+# Django
 *.log
-logs/
+*.pot
+*.pyc
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media
+staticfiles/
 
-# Файлы операционной системы
-.DS_Store
-Thumbs.db
 
-# Файлы IDE
+venv/
+ENV/
+env/
+.env
+.venv
+env/
+.venv/
+
 .idea/
 .vscode/
-*.sublime-*
+*.swp
+*.swo
+.DS_Store
+*.sublime*
 
-# Конфиденциальные данные
-*.pem
-*.key
-credentials.json 
+
+docker-compose.override.yml
+

@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'store',
+    'tailwind',
+    'theme',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +52,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
                 'store.context_preprocessors.store_menu',
                 'store.context_preprocessors.cart_menu',
             ],
@@ -108,3 +111,29 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Tailwind configuration
+TAILWIND_APP_NAME = 'theme'
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+NPM_BIN_PATH = "npm"  # Путь к npm, может потребоваться указать полный путь если npm не в PATH
+
+# Кэш и сессии
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Настройка сессий для использования кэша
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+# Время жизни сессии - 1 неделя (в секундах)
+SESSION_COOKIE_AGE = 604800
+
+# Настройки хранения сообщений
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_EXPIRE_SECONDS = 5  # Сообщения будут удаляться через 5 секунд

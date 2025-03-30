@@ -4,6 +4,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import RegistrationView, AddressView, CustomLoginView
 
 
 app_name = 'store'
@@ -18,26 +19,51 @@ urlpatterns = [
     path('minus-cart/<int:cart_id>/', views.minus_cart, name="minus-cart"),
     path('cart/', views.cart, name="cart"),
     path('checkout/', views.checkout, name="checkout"),
+    path('place-order/', views.place_order, name="place-order"),
+    path('payment/<str:order_number>/', views.payment_page, name="payment"),
+    path('process-payment/<str:order_number>/', views.process_payment, name="process-payment"),
     path('orders/', views.orders, name="orders"),
 
-    # Перемещаем URL для контактов выше URL для категорий
+    # URL для поиска
+    path('search/', views.search, name='search'),
+
+    # Статические страницы
     path('contacts/', views.contacts, name='contacts'),
+    path('about/', views.about, name='about'),
+    path('shipping/', views.shipping, name='shipping'),
+    path('privacy/', views.privacy, name='privacy'),
+    
+    # Подписка на рассылку
+    path('subscription/', views.subscription, name='subscription'),
+    
+    # Используем нашу функцию для выхода из системы
+    path('logout/', views.logout_view, name='logout'),
 
     #URL for Products
     path('product/<slug:slug>/', views.detail, name="product-detail"),
     path('categories/', views.all_categories, name="all-categories"),
-    path('<slug:slug>/', views.category_products, name="category-products"),
-
-    path('shop/', views.shop, name="shop"),
-
+    
     # URL for Authentication
-    path('accounts/register/', views.RegistrationView.as_view(), name="register"),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='account/login.html', authentication_form=LoginForm), name="login"),
-    path('accounts/profile/', views.profile, name="profile"),
-    path('accounts/add-address/', views.AddressView.as_view(), name="add-address"),
-    path('accounts/remove-address/<int:id>/', views.remove_address, name="remove-address"),
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='store:login'), name="logout"),
-
+    path('register/', RegistrationView.as_view(), name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('profile/', views.profile, name="profile"),
+    path('add-address/', AddressView.as_view(), name="add-address"),
+    path('remove-address/<int:id>/', views.remove_address, name="remove-address"),
+    
+    # URL для отзывов
+    path('my-reviews/', views.my_reviews, name='my-reviews'),
+    path('my-purchased-products/', views.my_purchased_products, name='my-purchased-products'),
+    path('add-review/<int:order_id>/', views.add_review, name='add-review'),
+    path('edit-review/<int:review_id>/', views.edit_review, name='edit-review'),
+    path('delete-review/<int:review_id>/', views.delete_review, name='delete-review'),
+    
+    # Административные URL
+    path('admin-orders/', views.admin_orders, name='admin-orders'),
+    path('admin-reviews/', views.admin_reviews, name='admin-reviews'),
+    path('update-order-status/<int:order_id>/', views.update_order_status, name='update-order-status'),
+    path('update-payment-status/<int:order_id>/', views.update_payment_status, name='update-payment-status'),
+    path('toggle-review-status/<int:review_id>/', views.toggle_review_status, name='toggle-review-status'),
+    
     path('accounts/password-change/', auth_views.PasswordChangeView.as_view(template_name='account/password_change.html', form_class=PasswordChangeForm, success_url='/accounts/password-change-done/'), name="password-change"),
     path('accounts/password-change-done/', auth_views.PasswordChangeDoneView.as_view(template_name='account/password_change_done.html'), name="password-change-done"),
 
@@ -47,6 +73,9 @@ urlpatterns = [
     path('accounts/password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='account/password_reset_complete.html'), name="password_reset_complete"),
 
     path('product/test/', views.test, name="test"),
+
+    # Этот URL должен быть в самом конце, так как он использует переменную slug
+    path('<slug:slug>/', views.category_products, name="category-products"),
 ]
 
 if settings.DEBUG:

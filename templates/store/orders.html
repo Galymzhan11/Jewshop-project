@@ -1,99 +1,171 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load humanize %}
+{% load store_tags %}
 
-    {% block content %}
+{% block title %}Мои заказы | Jewelisque{% endblock %}
 
-      <div class="container py-5">
-
-
-        <div class="row">
-
-          
-
-          <div class="col-lg-12">
-            <div class="card mb-4" id="tables">
-              <div class="card-header text-center">Заказы</div>
-              <div class="card-body">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Товар</th>
-                      <th>Изображение</th>
-                      <th>Количество</th>
-                      <th>Дата заказа</th>
-                      <th>Статус</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-
-                    {% if orders %}
-
-                    {% for order in orders %}
-                    <tr>
-                      <td>{{forloop.counter}}</td>
-                      <td>{{order.product.title}}</td>
-                      <td>
-                        {% if order.product.product_image %}
-                          <img src="{{order.product.product_image.url}}" alt="{{order.product.product_title}}" style="width:150px;">
-                        {% endif %}
-                      </td>
-                      <td>{{order.quantity}}</td>
-                      <td>{{order.ordered_date|naturaltime}}</td>
-                      <td>
-
-                        {% if order.status == 'Pending' %}
-                        
-                        {% endif %}
-
-                        {% if order.status == 'Accepted' %}
-                        <div class="bg-light border border-primary">
-                            <div class="p-3 bg-primary" style="width:0;"></div>
-                        </div>
-                        {% endif %}
-
-                        {% if order.status == 'Packed' %}
-                        <div class="bg-light border border-primary">
-                            <div class="p-3 bg-primary" style="width:40%;"></div>
-                        </div>
-                        {% endif %}
-                        
-                        
-                        {% if order.status == 'On The Way' %}
-                        <div class="bg-light border border-primary">
-                            <div class="p-3 bg-primary" style="width:70%;"></div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if order.status == 'Delivered' %}
-                        <div class="bg-light border border-primary">
-                            <div class="p-3 bg-primary" style="width:100%;"></div>
-                        </div>
-                        {% endif %}
-
-                        {% if order.status == 'Cancelled' %}
-                        <div class="bg-light border border-danger">
-                            <div class="p-3 bg-danger" style="width:100%;"></div>
-                        </div>
-                        {% endif %}
-                        
-                        {{order.status}}
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% endif %}
-                    
-                  </tbody>
-                </table>
-                
-              </div>
-            </div>
-          </div>
-          
-        </div>
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Мои заказы</span>
+    </div>
     
+    <h1 class="text-3xl font-bold mb-8 text-center">Мои заказы</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <div class="md:col-span-1">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-6 bg-gray-50 border-b">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4 text-gray-400">
+                            <i class="fas fa-user text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold">{{ request.user.username }}</h2>
+                            <p class="text-gray-500">{{ request.user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <ul class="space-y-1">
+                        <li>
+                            <a href="{% url 'store:profile' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i> Профиль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:orders' %}" class="block px-4 py-2 rounded-md bg-gray-100 font-medium">
+                                <i class="fas fa-shopping-bag mr-2"></i> Мои заказы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-reviews' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-star mr-2"></i> Мои отзывы
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:my-purchased-products' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-clipboard-list mr-2"></i> Оставить отзыв
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:password-change' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-lock mr-2"></i> Изменить пароль
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:logout' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100 text-red-600">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         
-        
-      </div>
-{% endblock content %}
+        <!-- Orders -->
+        <div class="md:col-span-3">
+            <div class="bg-white rounded-lg shadow">
+                {% if orders %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-50 text-left text-gray-600">
+                                <th class="px-6 py-3 font-medium">Товар</th>
+                                <th class="px-6 py-3 font-medium">Дата</th>
+                                <th class="px-6 py-3 font-medium">Адрес</th>
+                                <th class="px-6 py-3 font-medium">Статус</th>
+                                <th class="px-6 py-3 font-medium">Оплата</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            {% for order in orders %}
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="w-16 h-16 rounded-md overflow-hidden mr-3">
+                                            {% if order.product.product_image %}
+                                            <img src="{{ order.product.product_image.url }}" alt="{{ order.product.title }}" class="w-full h-full object-cover">
+                                            {% else %}
+                                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <a href="{% url 'store:product-detail' order.product.slug %}" class="font-medium hover:text-secondary">{{ order.product.title }}</a>
+                                            <p class="text-gray-500 text-sm">{{ order.quantity }} x {{ order.product.price }} ₸</p>
+                                            <p class="font-medium text-gray-800">Итого: {{ order.quantity|floatformat:0|mul:order.product.price|floatformat:0 }} ₸</p>
+                                            {% if order.order_number %}
+                                            <p class="text-xs text-gray-500 mt-1">№ {{ order.order_number }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ order.ordered_date|date:"d.m.Y" }}
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ order.address.locality }}, {{ order.address.city }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex px-2 py-1 text-xs rounded-full 
+                                        {% if order.status == 'Delivered' %}bg-green-100 text-green-800
+                                        {% elif order.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                                        {% elif order.status == 'Cancelled' %}bg-red-100 text-red-800
+                                        {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <!-- Способ оплаты -->
+                                        <p class="text-sm">
+                                            {% if order.payment_method == 'card' %}
+                                            <i class="far fa-credit-card mr-1"></i> Картой
+                                            {% else %}
+                                            <i class="far fa-money-bill-alt mr-1"></i> Наличными
+                                            {% endif %}
+                                        </p>
+                                        
+                                        <!-- Статус оплаты -->
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full mt-1
+                                            {% if order.payment_status == 'paid' %}bg-green-100 text-green-800
+                                            {% elif order.payment_status == 'pending' %}bg-yellow-100 text-yellow-800
+                                            {% else %}bg-red-100 text-red-800{% endif %}">
+                                            {% if order.payment_status == 'paid' %}
+                                                Оплачено
+                                            {% elif order.payment_status == 'pending' %}
+                                                Ожидает оплаты
+                                            {% else %}
+                                                Ошибка оплаты
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <div class="mb-6 text-gray-400">
+                        <i class="fas fa-shopping-bag text-6xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-semibold mb-4">У вас пока нет заказов</h2>
+                    <p class="text-gray-600 mb-8">Когда вы сделаете свой первый заказ, он появится здесь</p>
+                    <a href="{% url 'store:all-categories' %}" class="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition">Начать покупки</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

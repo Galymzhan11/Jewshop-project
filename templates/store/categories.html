@@ -1,103 +1,44 @@
 {% extends 'base.html' %}
-{% load static %}
 
-      {% block content %}
+{% block title %}Категории | Jewelisque{% endblock %}
 
-   
-      <div class="container">
-
-        
-        <section class="pt-5">
-          <header class="text-center">
-            <p class="small text-muted small text-uppercase mb-1">Тщательно созданные коллекции</p>
-            <h2 class="h5 text-uppercase mb-4">Просмотрите наши категории</h2>
-          </header>
-          <div class="row">
-          {% if categories %}
-            {% for category in categories %}
-
-              <div class="col-md-4 mb-4 mb-md-5">
-                <a class="category-item" href="{% url 'store:category-products' category.slug %}">
-                  {% if category.category_image %}
-                    <img class="img-fluid" src="{{ category.category_image.url }}" alt="{{ category.title }}">
-                    {% else %}
-                    <img class="img-fluid" src="{% static 'img/cat-img-1.jpg' %}" alt="{{ category.title }}">
-                  {% endif %}
-                  <strong class="category-item-title">{{ category.title }}</strong>
-                </a>
-              </div>
-            
-            {% endfor %}
-          {% endif %}
-          </div>
-        </section>
-
-        <section class="py-5 bg-light">
-          <div class="container">
-            <div class="row text-center">
-              <div class="col-lg-4 mb-3 mb-lg-0">
-                <div class="d-inline-block">
-                  <div class="media align-items-end">
-                    <svg class="svg-icon svg-icon-big svg-icon-light">
-                      <use xlink:href="#delivery-time-1"> </use>
-                    </svg>
-                    <div class="media-body text-left ml-3">
-                      <h6 class="text-uppercase mb-1">Бесплатная доставка</h6>
-                      <p class="text-small mb-0 text-muted">Бесплатная доставка по всему миру</p>
-                    </div>
-                  </div>
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Категории</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8 text-center">Наши категории</h1>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% for category in categories %}
+        <a href="{% url 'store:category-products' category.slug %}" class="group">
+            <div class="relative overflow-hidden rounded-lg aspect-square">
+                {% if category.category_image %}
+                <img src="{{ category.category_image.url }}" alt="{{ category.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                    <span class="text-gray-400 text-xl">Нет изображения</span>
                 </div>
-              </div>
-              <div class="col-lg-4 mb-3 mb-lg-0">
-                <div class="d-inline-block">
-                  <div class="media align-items-end">
-                    <svg class="svg-icon svg-icon-big svg-icon-light">
-                      <use xlink:href="#helpline-24h-1"> </use>
-                    </svg>
-                    <div class="media-body text-left ml-3">
-                      <h6 class="text-uppercase mb-1">Сервис 24/7</h6>
-                      <p class="text-small mb-0 text-muted">Круглосуточное обслуживание</p>
+                {% endif %}
+                <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end">
+                    <div class="w-full p-6 bg-white bg-opacity-90">
+                        <h3 class="text-xl font-semibold">{{ category.title }}</h3>
+                        {% if category.description %}
+                        <p class="text-gray-600 mt-2 line-clamp-2">{{ category.description }}</p>
+                        {% endif %}
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-lg-4">
-                <div class="d-inline-block">
-                  <div class="media align-items-end">
-                    <svg class="svg-icon svg-icon-big svg-icon-light">
-                      <use xlink:href="#label-tag-1"> </use>
-                    </svg>
-                    <div class="media-body text-left ml-3">
-                      <h6 class="text-uppercase mb-1">Праздничное предложение</h6>
-                      <p class="text-small mb-0 text-muted">Скидки по случаю праздников</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </section>
-
-        <section class="py-5">
-          <div class="container p-0">
-            <div class="row">
-              <div class="col-lg-6 mb-3 mb-lg-0">
-                <h5 class="text-uppercase">Давайте станем друзьями!</h5>
-                <p class="text-small text-muted mb-0">Оставьте ваш email, чтобы получать новости.</p>
-              </div>
-              <div class="col-lg-6">
-                <form action="#">
-                  <div class="input-group flex-column flex-sm-row mb-3">
-                    <input class="form-control form-control-lg py-3" type="email" placeholder="Введите ваш email" aria-describedby="button-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-dark btn-block" id="button-addon2" type="submit">Подписаться</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      {% endblock content %}
+        </a>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500 text-xl">Категории пока не добавлены</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

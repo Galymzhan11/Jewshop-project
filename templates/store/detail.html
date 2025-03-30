@@ -1,159 +1,264 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load store_tags %}
 
-    {% block content %}
+{% block title %}{{ product.title }} | Jewelisque{% endblock %}
 
-      <section class="py-5">
-        <div class="container">
-          <div class="row mb-5">
-            <div class="col-lg-6">
-              <!-- СЛАЙДЕР ПРОДУКТА-->
-              <div class="row m-sm-0">
-                
-                <div class="col-sm-12 order-1 order-sm-2">
-                  <div class="owl-carousel product-slider" data-slider-id="1">
-                    {% if product.product_image %}
-                      <a class="d-block" href="{{product.product_image.url}}" data-lightbox="product" title="{{product.title}}"><img class="img-fluid" src="{{product.product_image.url}}" alt="{{product.title}}"></a>
-                      {% else %}
-                      <a class="d-block" href="{% static 'img/product-detail-1.jpg' %}" data-lightbox="product" title="{{product.title}}"><img class="img-fluid" src="{% static 'img/product-detail-1.jpg' %}" alt="{{product.title}}"></a>
-                    {% endif %}
-                  </div>
+{% block extra_css %}
+<style>
+    .product-img-slider .selected {
+        border-color: #D4AF37;
+    }
+    .rating-percent {
+        height: 8px;
+        background-color: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .rating-percent-filled {
+        height: 100%;
+        background-color: #fbbf24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:category-products' product.category.slug %}" class="text-gray-500 hover:text-secondary">{{ product.category.title }}</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">{{ product.title }}</span>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Product Images -->
+        <div>
+            <div class="aspect-square rounded-lg overflow-hidden mb-4">
+                {% if product.product_image %}
+                <img src="{{ product.product_image.url }}" alt="{{ product.title }}" id="main-image" class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                    <span class="text-gray-400 text-2xl">Нет изображения</span>
                 </div>
-              </div>
+                {% endif %}
             </div>
-            <!-- ДЕТАЛИ ПРОДУКТА-->
-            <div class="col-lg-6">
-              <ul class="list-inline mb-2">
-                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
-              </ul>
-              <h1>{{product.title}}</h1>
-              <p class="text-muted lead">₸{{product.price}}</p>
-              <p class="text-small mb-4">{{product.short_description}}</p>
-
-              <div class="row align-items-stretch mb-4">
-                
-                <div class="col-sm-5 pr-sm-0">
-                  <div class="border d-flex align-items-center justify-content-between py-1 px-3 bg-white border-white"><span class="small text-uppercase text-gray mr-4 no-select">Количество</span>
-                    <div class="quantity">
-                      <button class="dec-btn p-0"><i class="fas fa-caret-left"></i></button>
-                      <input name="quantity" class="form-control border-0 shadow-0 p-0" type="text" value="1">
-                      <button class="inc-btn p-0"><i class="fas fa-caret-right"></i></button>
-                    </div>
-                  </div>
+            
+            <!-- Thumbnail Images -->
+            <div class="product-img-slider flex gap-4 overflow-x-auto py-2">
+                {% if product.product_image %}
+                <div class="thumbnail-item w-20 h-20 cursor-pointer border-2 border-transparent selected" onclick="changeImage('{{ product.product_image.url }}', this)">
+                    <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover">
                 </div>
-
-                <div class="col-sm-3 pl-sm-0">
-                  {% comment %} <a class="btn btn-dark btn-sm btn-block h-100 d-flex align-items-center justify-content-center px-0" href="{% url 'store:add-to-cart' %}">Добавить в корзину</a> {% endcomment %}
-                  
-                  <form action="{% url 'store:add-to-cart' %}">
-                    <input type="hidden" name="prod_id" value="{{product.id}}" id="product_id">
-                    <button type="submit" class="btn-cart btn-lg btn-block h-100 d-flex align-items-center justify-content-center px-0">
-                      <i class="fas fa-shopping-cart"></i>Добавить в корзину
-                    </button>
-                  </form>
-
-                </div>
-
-              </div><a class="btn btn-link text-dark p-0 mb-4" href="#"><i class="far fa-heart mr-2"></i>Добавить в список желаемого</a><br>
-              <ul class="list-unstyled small d-inline-block">
-                <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">Артикул:</strong><span class="ml-2 text-muted">{{product.sku}}</span></li>
-                <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Категория:</strong><a class="reset-anchor ml-2" href="{% url 'store:category-products' product.category.slug %}">{{product.category}}</a></li>
-                <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Теги:</strong><a class="reset-anchor ml-2" href="#">Инновации</a></li>
-              </ul>
+                {% endif %}
+                <!-- Здесь будут дополнительные изображения, если они есть -->
             </div>
-          </div>
-          <!-- ВКЛАДКИ ДЕТАЛЕЙ-->
-          <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
-            <li class="nav-item"><a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Описание</a></li>
-            <li class="nav-item"><a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Отзывы</a></li>
-          </ul>
-          <div class="tab-content mb-5" id="myTabContent">
-            <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
-              <div class="p-4 p-lg-5 bg-white">
-                <h6 class="text-uppercase">Описание продукта </h6>
-                <p class="text-muted text-small mb-0">{{product.detail_description}}</p>
-              </div>
-            </div>
-            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-              <div class="p-4 p-lg-5 bg-white">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <div class="media mb-3"><img class="rounded-circle" src="{% static 'img/customer-1.png' %}" alt="" width="50">
-                      <div class="media-body ml-3">
-                        <h6 class="mb-0 text-uppercase">Джейсон Доу</h6>
-                        <p class="small text-muted mb-0 text-uppercase">20 мая 2020</p>
-                        <ul class="list-inline mb-1 text-xs">
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                        </ul>
-                        <p class="text-small mb-0 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                      </div>
-                    </div>
-                    <div class="media"><img class="rounded-circle" src="{% static 'img/customer-2.png' %}" alt="" width="50">
-                      <div class="media-body ml-3">
-                        <h6 class="mb-0 text-uppercase">Джейсон Доу</h6>
-                        <p class="small text-muted mb-0 text-uppercase">20 мая 2020</p>
-                        <ul class="list-inline mb-1 text-xs">
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                        </ul>
-                        <p class="text-small mb-0 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- СВЯЗАННЫЕ ПРОДУКТЫ-->
-          <h2 class="h5 text-uppercase mb-4">Связанные продукты</h2>
-          <div class="row">
-
-            {% if related_products %}
-              {% for rp in related_products %}
-              
-                <!-- ПРОДУКТ-->
-                <div class="col-lg-3 col-sm-6">
-                  <div class="product text-center skel-loader">
-                    <div class="d-block mb-3 position-relative">
-                      <a class="d-block" href="{% url 'store:product-detail' rp.slug %}">
-                        {% if rp.product_image %}
-                          <img class="img-fluid w-100" src="{{rp.product_image.url}}" alt="{{rp.title}}">
-                        {% else %}
-                        <img class="img-fluid w-100" src="{% static 'img/product-1.jpg' %}" alt="{{rp.title}}">
-                        {% endif %}
-                      </a>
-
-                      <div class="product-overlay">
-                        <ul class="mb-0 list-inline">
-                          <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark" href="#"><i class="far fa-heart"></i></a></li>
-                          <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-dark" href="{% url 'store:add-to-cart' %}">Добавить в корзину</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                    <h6> <a class="reset-anchor" href="{% url 'store:product-detail' rp.slug %}">{{rp.title}}</a></h6>
-                    <p class="small text-muted">₸{{rp.price}}</p>
-                  </div>
-                </div>
-
-              {% endfor %}
-            {% endif %}
-
-           
-
-          </div>
         </div>
-      </section>
-      {% endblock content %}
+        
+        <!-- Product Info -->
+        <div>
+            <h1 class="text-3xl font-bold mb-2">{{ product.title }}</h1>
+            
+            <!-- Product SKU -->
+            <p class="text-sm text-gray-500 mb-4">SKU: {{ product.sku }}</p>
+            
+            <!-- Price -->
+            <div class="flex items-center mb-6">
+                <span class="text-3xl font-bold">{{ product.price }} ₸</span>
+                <!-- Здесь можно добавить старую цену, если есть скидка -->
+            </div>
+            
+            <!-- Short Description -->
+            <div class="mb-8">
+                <p class="text-gray-700">{{ product.short_description }}</p>
+            </div>
+            
+            <!-- Add to Cart Form -->
+            <form method="post" action="{% url 'store:add-to-cart' %}" class="mb-8">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                
+                <button type="submit" class="w-full py-3 px-6 bg-black text-white font-medium rounded hover:bg-opacity-90 transition flex items-center justify-center">
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    Добавить в корзину
+                </button>
+            </form>
+            
+            <!-- Product Features -->
+            <div class="border-t border-b border-gray-200 py-6 mb-8">
+                <h3 class="font-semibold mb-4">Особенности:</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>Устойчивость к воде и духам</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>2 года гарантии</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>14 дней возврата денег</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Detailed Description -->
+            {% if product.detail_description %}
+            <div class="mb-8">
+                <h3 class="font-semibold mb-4">Подробное описание:</h3>
+                <div class="text-gray-700">
+                    {{ product.detail_description|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Shipping Info -->
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fas fa-truck mr-2"></i>
+                <span>Бесплатная доставка по Казахстану</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="mt-16">
+        <h2 class="text-2xl font-bold mb-8">Похожие товары</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for related in related_products|slice:":4" %}
+            <div class="product-card bg-white rounded-lg overflow-hidden shadow">
+                <a href="{% url 'store:product-detail' related.slug %}">
+                    <div class="aspect-square overflow-hidden">
+                        {% if related.product_image %}
+                        <img src="{{ related.product_image.url }}" alt="{{ related.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center bg-gray-200">
+                            <span class="text-gray-400">Нет изображения</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-medium mb-2 line-clamp-2">{{ related.title }}</h3>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold">{{ related.price }} ₸</span>
+                            <div class="p-2 rounded-full bg-gray-100 hover:bg-secondary hover:text-white transition">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    
+    <!-- Reviews Section -->
+    <section class="mt-16">
+        <h2 class="text-2xl font-bold mb-8">Отзывы покупателей</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Reviews Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-center mb-6">
+                    <div class="text-4xl font-bold mb-1">{{ avg_rating }}</div>
+                    <div class="flex justify-center mb-2">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
+                                <i class="fas fa-star text-yellow-400"></i>
+                            {% elif forloop.counter <= avg_rating|add:0.5 %}
+                                <i class="fas fa-star-half-alt text-yellow-400"></i>
+                            {% else %}
+                                <i class="far fa-star text-yellow-400"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="text-gray-600">{{ reviews|length }} отзывов</div>
+                </div>
+                
+                <!-- Rating Distribution -->
+                <div class="space-y-2">
+                    {% for star in "54321" %}
+                    {% with star_as_int=star|add:"0" %}
+                    <div class="flex items-center">
+                        <div class="w-8 text-right mr-2">{{ star }} <i class="fas fa-star text-yellow-400 text-xs"></i></div>
+                        <div class="flex-grow">
+                            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                {% with count=rating_counts|get_item:star_as_int|default:0 %}
+                                <div class="h-full bg-yellow-400 rounded-full" style="width: {% if reviews|length > 0 %}{{ count|mul:100|div:reviews|length }}{% else %}0{% endif %}%;"></div>
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class="w-8 text-left ml-2 text-gray-600">{{ rating_counts|get_item:star_as_int|default:0 }}</div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+                
+                {% if can_review %}
+                <div class="mt-8 text-center">
+                    <a href="{% url 'store:my-purchased-products' %}" class="inline-block px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+                        Оставить отзыв
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Reviews List -->
+            <div class="lg:col-span-2">
+                {% if reviews %}
+                <div class="space-y-6">
+                    {% for review in reviews %}
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3 text-gray-500">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">{{ review.user.username }}</div>
+                                <div class="text-gray-500 text-sm">{{ review.created_at|date:"d.m.Y" }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex mb-3">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                    <i class="far fa-star text-yellow-400"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="text-gray-700">
+                            {{ review.comment }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="bg-white rounded-lg shadow p-8 text-center">
+                    <div class="mb-6 text-gray-400">
+                        <i class="fas fa-comment-alt text-6xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Пока нет отзывов</h3>
+                    <p class="text-gray-600 mb-6">Будьте первым, кто оставит отзыв на этот товар!</p>
+                    
+                    {% if can_review %}
+                    <a href="{% url 'store:my-purchased-products' %}" class="inline-block px-6 py-2 bg-black text-white rounded-md hover:bg-opacity-90 transition">
+                        Оставить отзыв
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="{% static 'js/product_detail.js' %}"></script>
+{% endblock %} 
