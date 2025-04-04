@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Редактировать категорию | Администратор | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:admin-categories' %}" class="text-gray-500 hover:text-secondary">Управление категориями</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Редактировать категорию</span>
+    </div>
+    
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-8 text-center">Редактировать категорию</h1>
+        
+        <div class="bg-white rounded-lg shadow p-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="{{ form.title.id_for_label }}" class="block mb-2 font-medium">{{ form.title.label }}</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.title.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.slug.id_for_label }}" class="block mb-2 font-medium">{{ form.slug.label }}</label>
+                    {{ form.slug }}
+                    {% if form.slug.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.slug.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="text-gray-500 text-sm mt-1">URL-дружественное имя. Только буквы, цифры, дефисы и подчеркивания.</p>
+                </div>
+                
+                <div>
+                    <label for="{{ form.description.id_for_label }}" class="block mb-2 font-medium">{{ form.description.label }}</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.description.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    {% if category.category_image %}
+                    <div class="mb-4">
+                        <p class="block mb-2 font-medium">Текущее изображение:</p>
+                        <img src="{{ category.category_image.url }}" alt="{{ category.title }}" class="w-32 h-32 object-cover rounded">
+                    </div>
+                    {% endif %}
+                    
+                    <label for="{{ form.category_image.id_for_label }}" class="block mb-2 font-medium">{{ form.category_image.label }}</label>
+                    {{ form.category_image }}
+                    {% if form.category_image.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.category_image.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="text-gray-500 text-sm mt-1">Оставьте пустым, чтобы сохранить текущее изображение. Рекомендуемый размер: 800x600 пикселей.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center">
+                        {{ form.is_active }}
+                        <label for="{{ form.is_active.id_for_label }}" class="ml-2">{{ form.is_active.label }}</label>
+                        {% if form.is_active.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.is_active.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex items-center">
+                        {{ form.is_featured }}
+                        <label for="{{ form.is_featured.id_for_label }}" class="ml-2">{{ form.is_featured.label }}</label>
+                        {% if form.is_featured.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.is_featured.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'store:admin-categories' %}" class="text-gray-600 hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Назад к категориям
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-secondary text-white font-medium rounded-md hover:bg-opacity-90 transition">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

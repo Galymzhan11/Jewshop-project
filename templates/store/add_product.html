@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Добавить товар | Администратор | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:admin-products' %}" class="text-gray-500 hover:text-secondary">Управление товарами</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Добавить товар</span>
+    </div>
+    
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-8 text-center">Добавление нового товара</h1>
+        
+        <div class="bg-white rounded-lg shadow p-8">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.title.id_for_label }}" class="block mb-2 font-medium">{{ form.title.label }}</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.title.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.slug.id_for_label }}" class="block mb-2 font-medium">{{ form.slug.label }}</label>
+                        {{ form.slug }}
+                        {% if form.slug.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.slug.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <p class="text-gray-500 text-sm mt-1">URL-дружественное имя. Только буквы, цифры, дефисы и подчеркивания.</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.category.id_for_label }}" class="block mb-2 font-medium">{{ form.category.label }}</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.category.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label class="block mb-2 font-medium">Артикул (SKU)</label>
+                        <div class="px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                            Будет сгенерирован автоматически
+                        </div>
+                        <p class="text-gray-500 text-sm mt-1">Уникальный идентификатор будет создан на основе категории и времени.</p>
+                        <!-- Скрытое поле SKU -->
+                        {{ form.sku.as_hidden }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="{{ form.short_description.id_for_label }}" class="block mb-2 font-medium">{{ form.short_description.label }}</label>
+                    {{ form.short_description }}
+                    {% if form.short_description.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.short_description.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.detail_description.id_for_label }}" class="block mb-2 font-medium">{{ form.detail_description.label }}</label>
+                    {{ form.detail_description }}
+                    {% if form.detail_description.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.detail_description.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.price.id_for_label }}" class="block mb-2 font-medium">{{ form.price.label }}</label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.price.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.product_image.id_for_label }}" class="block mb-2 font-medium">{{ form.product_image.label }}</label>
+                    {{ form.product_image }}
+                    {% if form.product_image.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.product_image.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="text-gray-500 text-sm mt-1">Рекомендуемый размер: 800x800 пикселей.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-center">
+                        {{ form.is_active }}
+                        <label for="{{ form.is_active.id_for_label }}" class="ml-2">{{ form.is_active.label }}</label>
+                        {% if form.is_active.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.is_active.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex items-center">
+                        {{ form.is_featured }}
+                        <label for="{{ form.is_featured.id_for_label }}" class="ml-2">{{ form.is_featured.label }}</label>
+                        {% if form.is_featured.errors %}
+                        <div class="text-red-600 text-sm mt-1">
+                            {% for error in form.is_featured.errors %}
+                            <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <a href="{% url 'store:admin-products' %}" class="text-gray-600 hover:text-secondary">
+                        <i class="fas fa-arrow-left mr-1"></i> Назад к товарам
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-secondary text-white font-medium rounded-md hover:bg-opacity-90 transition">
+                        Добавить товар
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

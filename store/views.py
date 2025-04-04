@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Category, Product, Cart, Order, Address, Review, STATUS_CHOICES, PAYMENT_STATUS_CHOICES
 from django.db.models import Count, Q, Min, Max, Avg
-from .forms import RegistrationForm, AddressForm, LoginForm, ReviewForm
+from .forms import RegistrationForm, AddressForm, LoginForm, ReviewForm, ProductForm, CategoryForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
@@ -16,6 +16,8 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import datetime
+import random
+import string
 
 def home(request):
     categories = Category.objects.filter(is_active=True, is_featured=True)[:4]
@@ -770,3 +772,226 @@ def toggle_review_status(request, review_id):
         messages.success(request, 'Отзыв скрыт')
     
     return redirect('store:admin-reviews')
+
+@login_required
+def admin_products(request):
+    """Отображает страницу управления товарами для администратора"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    # Получаем все категории для фильтра
+    categories = Category.objects.all()
+    
+    # Фильтрация товаров
+    products_list = Product.objects.all()
+    
+    # Фильтр по категории
+    category_id = request.GET.get('category')
+    if category_id:
+        products_list = products_list.filter(category_id=category_id)
+    
+    # Фильтр по статусу
+    status = request.GET.get('status')
+    if status:
+        if status == 'active':
+            products_list = products_list.filter(is_active=True)
+        elif status == 'inactive':
+            products_list = products_list.filter(is_active=False)
+        elif status == 'featured':
+            products_list = products_list.filter(is_featured=True)
+    
+    # Поиск по названию или SKU
+    search = request.GET.get('search')
+    if search:
+        products_list = products_list.filter(
+            Q(title__icontains=search) | Q(sku__icontains=search)
+        )
+    
+    # Пагинация
+    paginator = Paginator(products_list, 10)  # 10 товаров на страницу
+    page = request.GET.get('page')
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+    
+    context = {
+        'products': products,
+        'categories': categories,
+        'paginator': paginator,
+    }
+    
+    return render(request, 'store/admin_products.html', context)
+
+@login_required
+def admin_categories(request):
+    """Отображает страницу управления категориями для администратора"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    # Фильтрация категорий
+    categories_list = Category.objects.all()
+    
+    # Поиск по названию
+    search = request.GET.get('search')
+    if search:
+        categories_list = categories_list.filter(title__icontains=search)
+    
+    # Пагинация
+    paginator = Paginator(categories_list, 10)  # 10 категорий на страницу
+    page = request.GET.get('page')
+    try:
+        categories = paginator.page(page)
+    except PageNotAnInteger:
+        categories = paginator.page(1)
+    except EmptyPage:
+        categories = paginator.page(paginator.num_pages)
+    
+    context = {
+        'categories': categories,
+        'paginator': paginator,
+    }
+    
+    return render(request, 'store/admin_categories.html', context)
+
+@login_required
+def add_product(request):
+    """Форма добавления нового товара"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Сохраняем, но не выполняем запись в базу данных
+            product = form.save(commit=False)
+            
+            # Генерируем SKU на основе категории и времени
+            # Формат: JW-CAT{ID категории}-{timestamp}
+            category_id = form.cleaned_data['category'].id
+            timestamp = timezone.now().strftime('%Y%m%d%H%M')
+            
+            # Генерируем случайный суффикс (2 символа)
+            suffix = ''.join(random.choices(string.ascii_uppercase, k=2))
+            
+            # Собираем SKU
+            product.sku = f"JW-CAT{category_id}-{timestamp}{suffix}"
+            
+            # Сохраняем товар с новым SKU
+            product.save()
+            
+            messages.success(request, f'Товар успешно добавлен! Сгенерированный SKU: {product.sku}')
+            return redirect('store:admin-products')
+    else:
+        form = ProductForm()
+    
+    context = {'form': form}
+    return render(request, 'store/add_product.html', context)
+
+@login_required
+def edit_product(request, product_id):
+    """Форма редактирования существующего товара"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    product = get_object_or_404(Product, id=product_id)
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Товар успешно обновлен!')
+            return redirect('store:admin-products')
+    else:
+        form = ProductForm(instance=product)
+    
+    context = {'form': form, 'product': product}
+    return render(request, 'store/edit_product.html', context)
+
+@login_required
+def delete_product(request, product_id):
+    """Удаление товара"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    product = get_object_or_404(Product, id=product_id)
+    
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Товар успешно удален!')
+        return redirect('store:admin-products')
+    
+    context = {'product': product}
+    return render(request, 'store/delete_product.html', context)
+
+@login_required
+def add_category(request):
+    """Форма добавления новой категории"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Категория успешно добавлена!')
+            return redirect('store:admin-categories')
+    else:
+        form = CategoryForm()
+    
+    context = {'form': form}
+    return render(request, 'store/add_category.html', context)
+
+@login_required
+def edit_category(request, category_id):
+    """Форма редактирования существующей категории"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Категория успешно обновлена!')
+            return redirect('store:admin-categories')
+    else:
+        form = CategoryForm(instance=category)
+    
+    context = {'form': form, 'category': category}
+    return render(request, 'store/edit_category.html', context)
+
+@login_required
+def delete_category(request, category_id):
+    """Удаление категории"""
+    # Проверяем, что пользователь является администратором
+    if not request.user.is_superuser:
+        messages.error(request, "У вас нет прав доступа к этой странице!")
+        return redirect('store:profile')
+    
+    category = get_object_or_404(Category, id=category_id)
+    
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Категория успешно удалена!')
+        return redirect('store:admin-categories')
+    
+    context = {'category': category}
+    return render(request, 'store/delete_category.html', context)
