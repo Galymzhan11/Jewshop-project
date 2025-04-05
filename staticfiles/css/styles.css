@@ -1,0 +1,217 @@
+/* Общие стили */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Анимация и эффекты для карточек товара */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Эффект для золотых элементов */
+.gold-text {
+    color: #D4AF37;
+}
+
+.gold-bg {
+    background-color: #D4AF37;
+}
+
+/* Стили кнопок */
+.btn-primary {
+    background-color: #000;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #333;
+}
+
+.btn-secondary {
+    background-color: #D4AF37;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #c29e30;
+}
+
+/* Дополнительный эффект для навигации */
+.nav-link {
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #D4AF37;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Стили для различных меток */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+
+.badge-new {
+    background-color: #10B981;
+    color: white;
+}
+
+.badge-hot {
+    background-color: #EF4444;
+    color: white;
+}
+
+.badge-sale {
+    background-color: #D4AF37;
+    color: white;
+}
+
+/* Стилизация форм */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+/* Анимации для всплывающих элементов */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Стилизация для корзины */
+.cart-item {
+    transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+    background-color: #F9FAFB;
+}
+
+/* Стилизация иконок */
+.icon-circle {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F3F4F6;
+    color: #D4AF37;
+    margin-bottom: 1rem;
+}
+
+/* Эффект для категорий */
+.category-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card img {
+    transition: transform 0.5s ease;
+}
+
+.category-card:hover img {
+    transform: scale(1.1);
+}
+
+.category-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.category-card:hover .category-card-overlay {
+    opacity: 1;
+}
+
+/* Дизайн прогресс-баров (например, для заказов) */
+.progress-bar {
+    width: 100%;
+    height: 0.5rem;
+    background-color: #E5E7EB;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #D4AF37;
+    border-radius: 0.25rem;
+    transition: width 0.3s ease;
+} 
