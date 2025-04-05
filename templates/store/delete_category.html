@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load store_tags %}
+
+{% block title %}Удалить категорию | Администратор | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <div class="text-sm mb-8">
+        <a href="{% url 'store:home' %}" class="text-gray-500 hover:text-secondary">Главная</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:profile' %}" class="text-gray-500 hover:text-secondary">Профиль</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'store:admin-categories' %}" class="text-gray-500 hover:text-secondary">Управление категориями</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-700">Удалить категорию</span>
+    </div>
+    
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow p-8">
+            <div class="text-center">
+                <div class="text-5xl text-red-500 mb-4">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h1 class="text-2xl font-bold mb-3">Вы уверены?</h1>
+                <p class="text-gray-600 mb-6">
+                    Вы собираетесь удалить категорию: <span class="font-semibold">{{ category.title }}</span>
+                </p>
+                
+                {% if category.category_image %}
+                <div class="w-40 h-40 mx-auto mb-6">
+                    <img src="{{ category.category_image.url }}" alt="{{ category.title }}" class="w-full h-full object-cover rounded">
+                </div>
+                {% endif %}
+                
+                <div class="mb-8 text-left max-w-md mx-auto">
+                    <div class="mb-3">
+                        <span class="text-gray-600 font-medium">Описание:</span>
+                        <span class="text-gray-700">{{ category.description|truncatechars:100 }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-gray-600 font-medium">Количество товаров:</span>
+                        <span class="text-gray-700">{{ category.products.count }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600 font-medium">Статус:</span>
+                        <span class="text-gray-700">{% if category.is_active %}Активна{% else %}Неактивна{% endif %}</span>
+                    </div>
+                </div>
+                
+                <div class="text-gray-700 p-4 bg-red-50 rounded-lg mb-6">
+                    <p class="mb-1"><i class="fas fa-exclamation-circle mr-2"></i>Это действие нельзя отменить.</p>
+                    <p>Все товары, связанные с этой категорией, станут недоступными и должны быть перемещены в другую категорию.</p>
+                </div>
+                
+                <form method="post" class="flex justify-center gap-4">
+                    {% csrf_token %}
+                    <a href="{% url 'store:admin-categories' %}" class="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-md hover:bg-gray-300 transition">
+                        Отмена
+                    </a>
+                    <button type="submit" class="px-6 py-3 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
+                        Удалить категорию
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

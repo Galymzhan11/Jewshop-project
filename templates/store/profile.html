@@ -39,6 +39,16 @@
                         </li>
                         {% if user.is_superuser %}
                         <li>
+                            <a href="{% url 'store:admin-products' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-box mr-2"></i> Управление товарами
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'store:admin-categories' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-folder mr-2"></i> Управление категориями
+                            </a>
+                        </li>
+                        <li>
                             <a href="{% url 'store:admin-orders' %}" class="block px-4 py-2 rounded-md hover:bg-gray-100">
                                 <i class="fas fa-shopping-bag mr-2"></i> Управление заказами
                             </a>
@@ -107,6 +117,34 @@
                         <div class="text-3xl font-bold text-yellow-600 mb-2">{{ recent_reviews }}</div>
                         <p class="text-gray-600">Новых отзывов</p>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Admin Quick Links -->
+            <div class="bg-white rounded-lg shadow mb-8">
+                <div class="p-6 border-b">
+                    <h2 class="text-xl font-bold">Быстрые действия</h2>
+                </div>
+                
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="{% url 'store:add-product' %}" class="border border-gray-200 rounded-lg p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-box-open text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Добавить новый товар</h3>
+                            <p class="text-gray-500 text-sm">Создать и опубликовать новый товар</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'store:add-category' %}" class="border border-gray-200 rounded-lg p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-folder-plus text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium">Добавить категорию</h3>
+                            <p class="text-gray-500 text-sm">Создать новую категорию товаров</p>
+                        </div>
+                    </a>
                 </div>
             </div>
             

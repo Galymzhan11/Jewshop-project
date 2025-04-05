@@ -1,5 +1,5 @@
 from django.contrib.auth import password_validation
-from store.models import Address
+from store.models import Address, Product, Category
 from django import forms
 import django
 from django.contrib.auth.models import User
@@ -88,4 +88,158 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
+
+
+class CategoryForm(forms.ModelForm):
+    """Форма для добавления/редактирования категорий"""
+    
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Название категории'
+        }),
+        label="Название"
+    )
+    
+    slug = forms.SlugField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'URL категории (например: jewelry)'
+        }),
+        label="Slug"
+    )
+    
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Описание категории',
+            'rows': 3
+        }),
+        label="Описание",
+        required=False
+    )
+    
+    category_image = forms.ImageField(
+        widget=forms.FileInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+        }),
+        label="Изображение категории",
+        required=False
+    )
+    
+    is_active = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={
+            'class': 'h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded'
+        }),
+        label="Активная категория",
+        required=False,
+        initial=True
+    )
+    
+    is_featured = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={
+            'class': 'h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded'
+        }),
+        label="Рекомендуемая категория",
+        required=False
+    )
+    
+    class Meta:
+        model = Category
+        fields = ['title', 'slug', 'description', 'category_image', 'is_active', 'is_featured']
+
+
+class ProductForm(forms.ModelForm):
+    """Форма для добавления/редактирования товаров"""
+    
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Название товара'
+        }),
+        label="Название"
+    )
+    
+    slug = forms.SlugField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'URL товара (например: gold-ring)'
+        }),
+        label="Slug"
+    )
+    
+    sku = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Уникальный ID товара (например: JW-001)'
+        }),
+        label="Артикул (SKU)",
+        required=False
+    )
+    
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.filter(is_active=True),
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+        }),
+        label="Категория"
+    )
+    
+    short_description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Краткое описание товара',
+            'rows': 3
+        }),
+        label="Краткое описание"
+    )
+    
+    detail_description = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Подробное описание товара',
+            'rows': 5
+        }),
+        label="Подробное описание",
+        required=False
+    )
+    
+    price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+            'placeholder': 'Цена товара',
+            'min': 0,
+            'step': 0.01
+        }),
+        label="Цена (₸)"
+    )
+    
+    product_image = forms.ImageField(
+        widget=forms.FileInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent',
+        }),
+        label="Изображение товара",
+        required=False
+    )
+    
+    is_active = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={
+            'class': 'h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded'
+        }),
+        label="Активный товар",
+        required=False,
+        initial=True
+    )
+    
+    is_featured = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={
+            'class': 'h-4 w-4 text-secondary focus:ring-secondary border-gray-300 rounded'
+        }),
+        label="Рекомендуемый товар",
+        required=False
+    )
+    
+    class Meta:
+        model = Product
+        fields = ['title', 'slug', 'sku', 'category', 'short_description', 'detail_description', 'price', 'product_image', 'is_active', 'is_featured']
 

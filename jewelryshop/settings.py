@@ -1,19 +1,17 @@
 from pathlib import Path
-import environ
+from decouple import config, Csv
 import os
 
-env = environ.Env()
-environ.Env.read_env()
-
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-#SECRET_KEY = env('DJANGO_SECRET_KEY')
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = config('SECRET_KEY', default='j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)')
 
-SECRET_KEY = 'j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)'
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 
 INSTALLED_APPS = [
@@ -62,14 +60,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jewelryshop.wsgi.application'
 
-
+# Настройки базы данных
+# Используем PostgreSQL в продакшн и SQLite для локальной разработки
+# Проверяем, определена ли переменная окружения DATABASE_URL
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': config('DB_PORT'),
     }
-}
+ }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -100,12 +113,12 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = config('STATIC_URL', default='static/')
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'STATIC')]
+STATIC_ROOT = config('STATIC_ROOT', default=os.path.join(BASE_DIR, 'staticfiles'))
 
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = config('MEDIA_URL', default='/media/')
+MEDIA_ROOT = config('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media'))
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
