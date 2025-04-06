@@ -1,0 +1,86 @@
+/* Дополнительные стили */
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+.nav-link {
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: #D4AF37;
+    transition: width 0.3s;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+.btn-primary {
+    background-color: #000;
+    color: white;
+    border: 1px solid #000;
+    transition: all 0.3s;
+}
+.btn-primary:hover {
+    background-color: white;
+    color: #000;
+}
+.gold-text {
+    color: #D4AF37;
+}
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+/* Стили для логотипа */
+.logo-img {
+    height: auto;
+    max-height: 50px;
+    transition: transform 0.3s ease;
+}
+.logo-img:hover {
+    transform: scale(1.05);
+}
+.site-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.footer-logo {
+    filter: brightness(1.2);
+    max-height: 60px;
+    margin-bottom: 0;
+}
+.logo-divider {
+    height: 2rem;
+    width: 1px;
+    margin: 0 0.75rem;
+}
+@media (max-width: 768px) {
+    .logo-img {
+        max-height: 40px;
+    }
+    .footer-logo {
+        max-height: 50px;
+    }
+    .site-title {
+        font-size: 1.25rem;
+    }
+}
+@media (max-width: 480px) {
+    .site-title {
+        display: none;
+    }
+    .logo-divider {
+        display: none;
+    }
+}

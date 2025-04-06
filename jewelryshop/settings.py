@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config, Csv
 import os
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = False
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Добавляем WhiteNoise для обработки статических файлов
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,20 +62,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jewelryshop.wsgi.application'
 
+# Проверяем, запущено ли приложение локально
+def is_running_locally():
+    try:
+        hostname = socket.gethostname()
+        return hostname == 'localhost' or '127.0.0.1' in hostname or 'local' in hostname.lower()
+    except:
+        return False
+
 # Настройки базы данных
-# Используем PostgreSQL в продакшн и SQLite для локальной разработки
-# Проверяем, определена ли переменная окружения DATABASE_URL
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST'),
-            'PORT': config('DB_PORT'),
+    'default': {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': 'railway',
+    'USER': 'postgres',
+    'PASSWORD': 'nYjqqSrGXpNBjXZRIMyTItyJmrZDlDYD',
+    'HOST': 'hopper.proxy.rlwy.net',
+    'PORT': '40143',
     }
- }
+}
+
+
 
 
 # DATABASES = {
@@ -113,12 +123,17 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_URL = config('STATIC_URL', default='static/')
-STATICFILES_DIRS=[os.path.join(BASE_DIR,'STATIC')]
-STATIC_ROOT = config('STATIC_ROOT', default=os.path.join(BASE_DIR, 'staticfiles'))
+# Настройки статических файлов
+STATIC_URL = '/static/'  # Правильный URL с начальным /
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Исправлено на нижний регистр
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MEDIA_URL = config('MEDIA_URL', default='/media/')
-MEDIA_ROOT = config('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media'))
+# Настройки медиа-файлов
+MEDIA_URL = '/media/'  # Правильный URL с начальным /
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Включаем сжатие статических файлов с WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
