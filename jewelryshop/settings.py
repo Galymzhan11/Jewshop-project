@@ -124,6 +124,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Включаем сжатие статических файлов с WhiteNoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 CSRF_TRUSTED_ORIGINS = ['https://jewshop-project-production.up.railway.app']
+CSRF_COOKIE_SECURE = True  # если сайт работает через HTTPS
+SESSION_COOKIE_SECURE = True
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
