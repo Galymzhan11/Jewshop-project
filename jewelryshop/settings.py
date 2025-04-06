@@ -62,15 +62,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'jewelryshop.wsgi.application'
 
-# Проверяем, запущено ли приложение локально
-def is_running_locally():
-    try:
-        hostname = socket.gethostname()
-        return hostname == 'localhost' or '127.0.0.1' in hostname or 'local' in hostname.lower()
-    except:
-        return False
-
-# Настройки базы данных
 
 DATABASES = {
     'default': {
@@ -82,8 +73,6 @@ DATABASES = {
     'PORT': '40143',
     }
 }
-
-
 
 
 # DATABASES = {
@@ -134,6 +123,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Включаем сжатие статических файлов с WhiteNoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CSRF_TRUSTED_ORIGINS = ['https://jewshop-project-production.up.railway.app']
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
