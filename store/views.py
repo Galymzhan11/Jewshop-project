@@ -18,6 +18,8 @@ from django.utils import timezone
 from datetime import datetime
 import random
 import string
+from django.views.decorators.csrf import csrf_exempt
+from .fondy_payment import create_payment, verify_callback
 
 def home(request):
     categories = Category.objects.filter(is_active=True, is_featured=True)[:4]
@@ -82,28 +84,40 @@ def category_products(request, slug):
     }
     return render(request, 'store/category_products.html', context)
 
-@login_required
 def cart(request):
-    user = request.user
-    cart_products = Cart.objects.filter(user=user)
+    if request.user.is_authenticated:
+        user = request.user
+        cart_products = Cart.objects.filter(user=user)
+        
+        # Рассчитываем общую сумму
+        amount = 0
+        for p in cart_products:
+            amount += p.quantity * p.product.price
+        
+        context = {
+            'cart_products': cart_products,
+            'amount': amount,
+        }
+    else:
+        # Для неавторизованных пользователей показываем пустую корзину
+        context = {
+            'cart_products': [],
+            'amount': 0,
+        }
     
-    # Рассчитываем общую сумму
-    amount = 0
-    for p in cart_products:
-        amount += p.quantity * p.product.price
-    
-    context = {
-        'cart_products': cart_products,
-        'amount': amount,
-    }
     return render(request, 'store/cart.html', context)
 
-@login_required
 def add_to_cart(request):
     if request.method == 'POST':
-        user = request.user
         product_id = request.POST.get('product_id')
+        
+        # Если пользователь не авторизован, перенаправляем на страницу входа
+        if not request.user.is_authenticated:
+            messages.warning(request, "Пожалуйста, войдите в систему, чтобы добавить товар в корзину")
+            return redirect('store:login')
+        
         product = get_object_or_404(Product, id=product_id)
+        user = request.user
         
         # Проверяем, есть ли уже такой товар в корзине
         item_already_in_cart = Cart.objects.filter(user=user, product=product).exists()
@@ -118,21 +132,33 @@ def add_to_cart(request):
     
     return redirect('store:home')
 
-@login_required
 def remove_cart(request, cart_id):
+    # Если пользователь не авторизован, перенаправляем на страницу входа
+    if not request.user.is_authenticated:
+        messages.warning(request, "Пожалуйста, войдите в систему, чтобы управлять корзиной")
+        return redirect('store:login')
+        
     cart_item = get_object_or_404(Cart, id=cart_id)
     cart_item.delete()
     return redirect('store:cart')
 
-@login_required
 def plus_cart(request, cart_id):
+    # Если пользователь не авторизован, перенаправляем на страницу входа
+    if not request.user.is_authenticated:
+        messages.warning(request, "Пожалуйста, войдите в систему, чтобы управлять корзиной")
+        return redirect('store:login')
+        
     cart_item = get_object_or_404(Cart, id=cart_id)
     cart_item.quantity += 1
     cart_item.save()
     return redirect('store:cart')
 
-@login_required
 def minus_cart(request, cart_id):
+    # Если пользователь не авторизован, перенаправляем на страницу входа
+    if not request.user.is_authenticated:
+        messages.warning(request, "Пожалуйста, войдите в систему, чтобы управлять корзиной")
+        return redirect('store:login')
+        
     cart_item = get_object_or_404(Cart, id=cart_id)
     if cart_item.quantity > 1:
         cart_item.quantity -= 1
@@ -237,46 +263,92 @@ def place_order(request):
 @login_required
 def payment_page(request, order_number):
     """Страница оплаты для заказов"""
-    # Получаем заказы с указанным номером
-    orders = Order.objects.filter(order_number=order_number, user=request.user)
-    
-    if not orders:
-        messages.error(request, "Заказ не найден")
+    try:
+        # Получаем заказы с указанным номером
+        orders = Order.objects.filter(order_number=order_number, user=request.user)
+        
+        if not orders:
+            messages.error(request, "Заказ не найден")
+            return redirect('store:orders')
+        
+        # Рассчитываем общую сумму заказа в тенге
+        total_amount_kzt = 0
+        for order in orders:
+            total_amount_kzt += order.product.price * order.quantity
+        
+        # Конвертируем в USD для тестового режима Fondy (примерно 1 USD = 450 KZT)
+        # В реальном приложении здесь должен быть API для получения актуального курса
+        exchange_rate = 450
+        total_amount_usd = round(total_amount_kzt / exchange_rate, 2)
+        
+        # Проверяем, включен ли режим тестирования локальной платежной страницы
+        use_local_payment = request.GET.get('local') == '1'
+        
+        if not use_local_payment:
+            # Формируем описание заказа
+            products_list = ", ".join([f"{order.product.title} x {order.quantity}" for order in orders])
+            description = f"Оплата заказа #{order_number}: {products_list}"
+            
+            # Абсолютные URL-адреса для обработки платежей Fondy
+            base_url = request.build_absolute_uri('/').rstrip('/')
+            redirect_url = f"{base_url}/fondy-success/"
+            callback_url = f"{base_url}/fondy-callback/"
+            
+            # Логируем URL-адреса для отладки
+            print(f"Payment URLs: redirect={redirect_url}, callback={callback_url}")
+            
+            # Создаем платеж в Fondy
+            payment_result = create_payment(
+                order_number=order_number,
+                amount=total_amount_usd,  # Используем сумму в USD
+                description=description,
+                currency='USD',  # Используем USD для тестового режима
+                redirect_url=redirect_url,
+                callback_url=callback_url
+            )
+            
+            if payment_result['status'] == 'success':
+                # Перенаправляем на страницу оплаты Fondy
+                return redirect(payment_result['checkout_url'])
+            else:
+                # Если произошла ошибка при создании платежа, показываем локальную страницу
+                error_message = payment_result.get('message', 'Неизвестная ошибка')
+                messages.warning(request, f"Не удалось подключиться к Fondy: {error_message}. Показываем локальную платежную страницу.")
+                use_local_payment = True
+        
+        # Если используем локальную страницу оплаты
+        if use_local_payment:
+            context = {
+                'order_number': order_number,
+                'orders': orders,
+                'total_amount': total_amount_kzt,
+                'total_amount_usd': total_amount_usd,
+                'is_local_payment': True
+            }
+            return render(request, 'store/payment.html', context)
+            
+    except Exception as e:
+        # Добавляем обработку всех исключений
+        messages.error(request, f"Произошла ошибка: {str(e)}")
         return redirect('store:orders')
-    
-    # Рассчитываем общую сумму заказа
-    total_amount = 0
-    for order in orders:
-        total_amount += order.product.price * order.quantity
-    
-    context = {
-        'order_number': order_number,
-        'orders': orders,
-        'total_amount': total_amount,
-    }
-    
-    return render(request, 'store/payment.html', context)
 
 @login_required
 @require_POST
 def process_payment(request, order_number):
-    """Обработка платежа"""
-    # В реальной системе здесь была бы интеграция с платежным шлюзом
-    # Для тестовой системы просто обновляем статус
-    
+    """Обработка платежа (используется для тестирования, в основном платежи обрабатываются через колбэк)"""
     orders = Order.objects.filter(order_number=order_number, user=request.user)
     
     if not orders:
         return JsonResponse({'status': 'error', 'message': 'Заказ не найден'}, status=404)
     
-    # Обновляем статус оплаты
+    # В случае тестирования можно вручную обновлять статус заказа
     for order in orders:
         order.payment_status = 'paid'
         order.save()
     
     return JsonResponse({
         'status': 'success',
-        'message': 'Оплата прошла успешно!',
+        'message': 'Оплата принята к обработке',
         'redirect': '/orders/'
     })
 
@@ -288,7 +360,85 @@ def orders(request):
         return redirect('store:admin-orders')
     
     orders = Order.objects.filter(user=request.user)
+    
+    # Проверяем наличие информации о платеже в сессии
+    payment_success = request.session.pop('payment_success', False)
+    payment_id = request.session.pop('payment_id', None)
+    order_id = request.session.pop('order_id', None)
+    
+    # Если есть информация о платеже, добавляем сообщение
+    if payment_success:
+        messages.success(
+            request, 
+            f"Платеж успешно обработан! Номер заказа: {order_id}, ID платежа: {payment_id}"
+        )
+    
     return render(request, 'store/orders.html', {'orders': orders})
+
+@csrf_exempt
+def fondy_success(request):
+    """Обработка успешного платежа от Fondy (страница перенаправления)"""
+    # Этот метод вызывается, когда Fondy перенаправляет пользователя обратно после оплаты
+    try:
+        # Получаем данные от Fondy (могут быть в POST или GET)
+        if request.method == 'POST':
+            payment_id = request.POST.get('payment_id')
+            order_id = request.POST.get('order_id')
+        else:
+            payment_id = request.GET.get('payment_id')
+            order_id = request.GET.get('order_id')
+            
+        # Логирование полученных данных
+        print(f"Fondy redirect received: method={request.method}, order_id={order_id}, payment_id={payment_id}")
+        
+        # Перенаправляем на страницу успешной оплаты с параметрами
+        return redirect(f'/payment-success/?order_id={order_id}&payment_id={payment_id}')
+    except Exception as e:
+        # В случае ошибки логируем её и всё равно перенаправляем на страницу успеха
+        print(f"Error in fondy_success: {str(e)}")
+        return redirect('/payment-success/')
+
+def payment_success(request):
+    """Страница с сообщением об успешной оплате, доступная всем пользователям"""
+    # Получаем параметры из URL, если они есть
+    order_id = request.GET.get('order_id')
+    payment_id = request.GET.get('payment_id')
+    
+    # Логируем получение запроса
+    print(f"Payment success page: order_id={order_id}, payment_id={payment_id}")
+    
+    # Если есть ID заказа, попробуем получить информацию о нем
+    order_info = None
+    if order_id:
+        try:
+            orders = Order.objects.filter(order_number=order_id)
+            if orders.exists():
+                # Берем первый заказ для показа базовой информации
+                first_order = orders.first()
+                order_info = {
+                    'order_number': order_id,
+                    'date': first_order.ordered_date,
+                    'product_count': orders.count(),
+                    'total_amount': sum(order.product.price * order.quantity for order in orders)
+                }
+                
+                # Убедимся, что заказ отмечен как оплаченный
+                for order in orders:
+                    if order.payment_status != 'paid':
+                        order.payment_status = 'paid'
+                        order.save()
+        except Exception as e:
+            # В случае ошибки просто не показываем информацию о заказе
+            print(f"Error getting order info: {str(e)}")
+    
+    context = {
+        'order_id': order_id,
+        'payment_id': payment_id,
+        'order_info': order_info,
+        'is_authenticated': request.user.is_authenticated
+    }
+    
+    return render(request, 'store/payment_success.html', context)
 
 def contacts(request):
     return render(request, 'store/contacts.html')
@@ -995,3 +1145,57 @@ def delete_category(request, category_id):
     
     context = {'category': category}
     return render(request, 'store/delete_category.html', context)
+
+@csrf_exempt
+def fondy_callback(request):
+    """Обработка колбэка от Fondy"""
+    if request.method == 'POST':
+        try:
+            # Попытка декодировать JSON
+            data = json.loads(request.body)
+            
+            # Логирование данных (в продакшене лучше использовать настоящее логирование)
+            print("Received Fondy callback data:", data)
+            
+            # Данные могут быть в разных форматах, проверяем оба варианта
+            order_data = data.get('order', {})
+            if not order_data:
+                order_data = data
+            
+            # Проверяем подпись
+            if not verify_callback(order_data):
+                return JsonResponse({'status': 'error', 'message': 'Invalid signature'}, status=400)
+            
+            # Получаем данные о платеже
+            order_id = order_data.get('order_id')
+            payment_status = order_data.get('order_status')
+            
+            if not order_id or not payment_status:
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'}, status=400)
+            
+            # Проверяем статус платежа
+            if payment_status == 'approved':
+                # Обновляем статус заказа в базе данных
+                orders = Order.objects.filter(order_number=order_id)
+                for order in orders:
+                    order.payment_status = 'paid'
+                    order.save()
+                
+                return JsonResponse({'status': 'success'})
+            else:
+                # Обновляем статус заказа в соответствии с полученным статусом
+                orders = Order.objects.filter(order_number=order_id)
+                for order in orders:
+                    order.payment_status = 'failed'
+                    order.save()
+                
+                return JsonResponse({'status': 'error', 'message': f'Payment failed with status: {payment_status}'})
+                
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error: {str(e)}, body: {request.body}")
+            return JsonResponse({'status': 'error', 'message': f'Invalid JSON: {str(e)}'}, status=400)
+        except Exception as e:
+            print(f"Exception in fondy_callback: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': f'Server error: {str(e)}'}, status=500)
+    
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)

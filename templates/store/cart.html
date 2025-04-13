@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load store_tags %}
 
 {% block title %}Корзина | Jewelisque{% endblock %}
 
@@ -96,9 +97,21 @@
                     <span class="text-lg font-bold">{{ amount }} ₸</span>
                 </div>
                 
+                {% if request.user.is_authenticated %}
                 <a href="{% url 'store:checkout' %}" class="w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition flex items-center justify-center">
                     Оформить заказ
                 </a>
+                {% else %}
+                <div class="mb-4">
+                    <a href="{% url 'store:login' %}?next={% url 'store:checkout' %}" class="w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition flex items-center justify-center">
+                        Войти для оформления заказа
+                    </a>
+                </div>
+                <div class="text-center text-sm text-gray-600">
+                    <p>У вас нет аккаунта?</p>
+                    <a href="{% url 'store:register' %}" class="text-secondary hover:underline">Зарегистрироваться</a>
+                </div>
+                {% endif %}
                 
                 <div class="mt-6 text-center">
                     <a href="{% url 'store:all-categories' %}" class="text-gray-600 hover:text-secondary">

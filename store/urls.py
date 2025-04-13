@@ -23,6 +23,9 @@ urlpatterns = [
     path('payment/<str:order_number>/', views.payment_page, name="payment"),
     path('process-payment/<str:order_number>/', views.process_payment, name="process-payment"),
     path('orders/', views.orders, name="orders"),
+    path('fondy-callback/', views.fondy_callback, name='fondy_callback'),
+    path('fondy-success/', views.fondy_success, name='fondy-success'),
+    path('payment-success/', views.payment_success, name='payment_success'),
 
     # URL для поиска
     path('search/', views.search, name='search'),

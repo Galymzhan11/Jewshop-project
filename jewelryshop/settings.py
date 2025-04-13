@@ -157,3 +157,6 @@ SESSION_COOKIE_AGE = 604800
 # Настройки хранения сообщений
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_EXPIRE_SECONDS = 5  # Сообщения будут удаляться через 5 секунд
+
+# URL сайта для интеграции с Fondy
+SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')

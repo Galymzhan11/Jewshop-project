@@ -20,6 +20,12 @@
             <div class="bg-gray-800 text-white p-6">
                 <h1 class="text-2xl font-bold">Оплата заказа #{{ order_number }}</h1>
                 <p class="mt-2">Сумма к оплате: <span class="font-bold">{{ total_amount }} ₸</span></p>
+                {% if total_amount_usd %}
+                <p class="mt-1 text-gray-300 text-sm">
+                    <i class="fas fa-exchange-alt mr-1"></i> При оплате будет списано: <span class="font-bold">$ {{ total_amount_usd }}</span>
+                    <span class="text-xs">(конвертация для тестового режима Fondy)</span>
+                </p>
+                {% endif %}
             </div>
             
             <!-- Order Summary -->
@@ -88,7 +94,36 @@
                 
                 <div class="mt-6 text-center text-sm text-gray-500 flex items-center justify-center">
                     <i class="fas fa-lock mr-2"></i>
-                    <span>Тестовая оплата, реальные деньги не будут списаны</span>
+                    <span>
+                        {% if is_local_payment %}
+                        Локальная тестовая оплата (Fondy недоступен)
+                        {% else %}
+                        Тестовая оплата через Fondy, используйте тестовые карты
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <!-- Тестовые карты Fondy -->
+                <div class="mt-4 text-sm text-gray-600 bg-gray-50 p-4 rounded">
+                    <h3 class="font-bold mb-2">Тестовые карты Fondy:</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><span class="font-medium">Успешная оплата:</span> 4444 5555 6666 7777</li>
+                        <li><span class="font-medium">Оплата с 3DS:</span> 4444 3333 2222 1111</li>
+                        <li><span class="font-medium">Отклоненная оплата:</span> 5555 5555 5555 5555</li>
+                        <li><span class="font-medium">Срок действия:</span> любая будущая дата (например, 12/25)</li>
+                        <li><span class="font-medium">CVV:</span> любые 3 цифры (например, 123)</li>
+                        <li><span class="font-medium">3DS пароль:</span> 111111</li>
+                    </ul>
+                    
+                    <div class="mt-3 text-blue-600">
+                        <p><i class="fas fa-info-circle mr-1"></i> Все транзакции проходят в тестовом режиме Fondy. 
+                        Реальные деньги не будут списаны с карты.</p>
+                        
+                        {% if is_local_payment %}
+                        <p class="mt-2"><i class="fas fa-exclamation-triangle mr-1"></i> Сейчас используется локальная тестовая оплата. 
+                        Данные карты не будут отправлены ни в какую платежную систему.</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             

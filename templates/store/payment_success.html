@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Оплата успешно завершена | Jewelisque{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Success Header -->
+            <div class="bg-green-600 text-white p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-3xl text-green-600"></i>
+                    </div>
+                </div>
+                <h1 class="text-2xl font-bold">Оплата успешно завершена!</h1>
+                <p class="mt-2">Спасибо за ваш заказ</p>
+            </div>
+            
+            <!-- Order Info -->
+            {% if order_info %}
+            <div class="p-6 border-b">
+                <h2 class="text-lg font-bold mb-4">Информация о заказе</h2>
+                
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Номер заказа:</span>
+                        <span class="font-medium">{{ order_info.order_number }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Дата заказа:</span>
+                        <span class="font-medium">{{ order_info.date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Количество товаров:</span>
+                        <span class="font-medium">{{ order_info.product_count }}</span>
+                    </div>
+                    <div class="flex justify-between border-t border-gray-200 pt-2 mt-2">
+                        <span class="text-gray-800 font-medium">Общая сумма:</span>
+                        <span class="font-bold">{{ order_info.total_amount }} ₸</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if payment_id %}
+            <div class="p-6 border-b bg-gray-50">
+                <p class="text-sm text-gray-600">
+                    <i class="fas fa-info-circle mr-1 text-blue-500"></i>
+                    Идентификатор платежа: <span class="font-mono">{{ payment_id }}</span>
+                </p>
+            </div>
+            {% endif %}
+            
+            <!-- Next Steps -->
+            <div class="p-6">
+                <h2 class="text-lg font-bold mb-4">Что дальше?</h2>
+                
+                {% if is_authenticated %}
+                <p class="text-gray-600 mb-4">Вы можете отслеживать статус вашего заказа в личном кабинете.</p>
+                <a href="{% url 'store:orders' %}" class="block w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition">
+                    Перейти к моим заказам
+                </a>
+                {% else %}
+                <p class="text-gray-600 mb-4">Для отслеживания статуса заказа, пожалуйста, войдите в свой аккаунт.</p>
+                <div class="flex flex-col space-y-3">
+                    <a href="{% url 'store:login' %}?next={% url 'store:orders' %}" class="block w-full py-3 bg-black text-white text-center font-medium rounded-md hover:bg-opacity-90 transition">
+                        Войти в аккаунт
+                    </a>
+                    <a href="{% url 'store:home' %}" class="block w-full py-3 bg-gray-200 text-gray-800 text-center font-medium rounded-md hover:bg-gray-300 transition">
+                        Вернуться на главную
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Extra Info -->
+            <div class="p-6 bg-gray-50 border-t">
+                <div class="text-center text-sm text-gray-600">
+                    <p class="mb-2">Уведомление о заказе было отправлено на вашу электронную почту.</p>
+                    <p>Если у вас возникли вопросы, свяжитесь с нами по телефону: <span class="font-medium">+7 (777) 123-45-67</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

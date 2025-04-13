@@ -72,13 +72,13 @@
                 </a>
                 
                 <!-- Навигация для десктопов -->
-                <nav class="hidden md:flex space-x-8 text-sm font-medium">
-                    <a href="{% url 'store:home' %}" class="nav-link">Главная</a>
-                    <a href="{% url 'store:all-categories' %}" class="nav-link">Категории</a>
+                <nav class="hidden md:flex space-x-8 text-sm font-bold">
+                    <a href="{% url 'store:home' %}" class="nav-link text-gray-800 hover:text-secondary transition hover:scale-105">Главная</a>
+                    <a href="{% url 'store:all-categories' %}" class="nav-link text-gray-800 hover:text-secondary transition hover:scale-105">Категории</a>
                     {% for category in menu_categories %}
-                    <a href="{% url 'store:category-products' category.slug %}" class="nav-link">{{ category.title }}</a>
+                    <a href="{% url 'store:category-products' category.slug %}" class="nav-link text-gray-800 hover:text-secondary transition hover:scale-105">{{ category.title }}</a>
                     {% endfor %}
-                    <a href="{% url 'store:contacts' %}" class="nav-link">Контакты</a>
+                    <a href="{% url 'store:contacts' %}" class="nav-link text-gray-800 hover:text-secondary transition hover:scale-105">Контакты</a>
                 </nav>
                 
                 <!-- Иконки поиск/корзина -->
@@ -111,12 +111,12 @@
                     <span class="site-title">Jewel<span class="gold-text">isque</span></span>
                 </div>
                 <nav class="flex flex-col space-y-2 py-4">
-                    <a href="{% url 'store:home' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Главная</a>
-                    <a href="{% url 'store:all-categories' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Категории</a>
+                    <a href="{% url 'store:home' %}" class="py-2 px-4 hover:bg-gray-100 rounded font-bold text-gray-800 hover:text-secondary transition">Главная</a>
+                    <a href="{% url 'store:all-categories' %}" class="py-2 px-4 hover:bg-gray-100 rounded font-bold text-gray-800 hover:text-secondary transition">Категории</a>
                     {% for category in menu_categories %}
-                    <a href="{% url 'store:category-products' category.slug %}" class="py-2 px-4 hover:bg-gray-100 rounded">{{ category.title }}</a>
+                    <a href="{% url 'store:category-products' category.slug %}" class="py-2 px-4 hover:bg-gray-100 rounded font-bold text-gray-800 hover:text-secondary transition">{{ category.title }}</a>
                     {% endfor %}
-                    <a href="{% url 'store:contacts' %}" class="py-2 px-4 hover:bg-gray-100 rounded">Контакты</a>
+                    <a href="{% url 'store:contacts' %}" class="py-2 px-4 hover:bg-gray-100 rounded font-bold text-gray-800 hover:text-secondary transition">Контакты</a>
                 </nav>
             </div>
         </div>
