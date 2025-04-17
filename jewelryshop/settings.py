@@ -13,7 +13,7 @@ SECRET_KEY = "j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)"
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-ALLOWED_HOSTS=localhost,127.0.0.1,jewshop-project-production.up.railway.app,09d0-37-99-46-66.ngrok-free.app
+ALLOWED_HOSTS= ['localhost', '127.0.0.1', 'jewshop-project-production.up.railway.app', '09d0-37-99-46-66.ngrok-free.app']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
