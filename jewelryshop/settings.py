@@ -7,13 +7,13 @@ import socket
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
-
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+print("🔥 ALLOWED_HOSTS:", ALLOWED_HOSTS)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,22 +65,22 @@ WSGI_APPLICATION = 'jewelryshop.wsgi.application'
 
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'railway',
-    'USER': 'postgres',
-    'PASSWORD': 'nYjqqSrGXpNBjXZRIMyTItyJmrZDlDYD',
-    'HOST': 'hopper.proxy.rlwy.net',
-    'PORT': '40143',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+        'CONN_MAX_AGE': 600,
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'keepalives': 1,
+            'keepalives_idle': 30,
+            'keepalives_interval': 10,
+            'keepalives_count': 5,
+        },
     }
 }
-
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 
 
@@ -123,40 +123,54 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Включаем сжатие статических файлов с WhiteNoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-CSRF_TRUSTED_ORIGINS = ['https://jewshop-project-production.up.railway.app']
-CSRF_COOKIE_SECURE = True  # если сайт работает через HTTPS
-SESSION_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [config('SITE_URL', default='http://localhost')]
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 # Tailwind configuration
-TAILWIND_APP_NAME = 'theme'
+TAILWIND_APP_NAME = config('TAILWIND_APP_NAME', default='theme')
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-NPM_BIN_PATH = "npm"  # Путь к npm, может потребоваться указать полный путь если npm не в PATH
+NPM_BIN_PATH = config('NPM_BIN_PATH', default='npm')  # Путь к npm, может потребоваться указать полный путь если npm не в PATH
 
-# Кэш и сессии
+# Настройки кэширования
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': config('REDIS_URL', default='redis://redis:6379/1'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'RETRY_ON_TIMEOUT': True,
+            'MAX_CONNECTIONS': 1000,
+            'CONNECTION_POOL_KWARGS': {'max_connections': 100},
+        }
     }
 }
 
-# Настройка сессий для использования кэша
+# Настройка сессий
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+SESSION_COOKIE_AGE = 604800  # 1 неделя
 
-# Время жизни сессии - 1 неделя (в секундах)
-SESSION_COOKIE_AGE = 604800
+# Кэширование шаблонов
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )),
+)
 
-# Настройки хранения сообщений
+# Настройки сообщений
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_EXPIRE_SECONDS = 5  # Сообщения будут удаляться через 5 секунд
 
 # URL сайта для интеграции с Fondy
-SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
+SITE_URL = config('SITE_URL', default='http://localhost')
