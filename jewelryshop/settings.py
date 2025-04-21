@@ -7,13 +7,13 @@ import socket
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = config('SECRET_KEY')
-SECRET_KEY = "j9w=_78!v$!_2k7r3g(t=wsp0$#u%-6f@lz0y7*p25)"
+SECRET_KEY = config('SECRET_KEY')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-ALLOWED_HOSTS= ['localhost', '127.0.0.1', 'jewshop-project-production.up.railway.app', '09d0-37-99-46-66.ngrok-free.app']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -123,7 +123,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Включаем сжатие статических файлов с WhiteNoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-CSRF_TRUSTED_ORIGINS = [config('SITE_URL', default='http://localhost')]
+CSRF_TRUSTED_ORIGINS = config('SITE_URL', cast=Csv())
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 
@@ -173,4 +173,4 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 MESSAGE_EXPIRE_SECONDS = 5  # Сообщения будут удаляться через 5 секунд
 
 # URL сайта для интеграции с Fondy
-SITE_URL = config('SITE_URL', default='http://localhost')
+SITE_URL = config('SITE_URL', cast=Csv())
